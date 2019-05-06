@@ -42,6 +42,9 @@
             this.buffBox = new System.Windows.Forms.TextBox();
             this.proBox = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.msgBox = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.button3 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBox
@@ -170,11 +173,41 @@
             this.label3.Text = "PROTOCOL";
             this.label3.Click += new System.EventHandler(this.Label3_Click);
             // 
+            // msgBox
+            // 
+            this.msgBox.Location = new System.Drawing.Point(311, 292);
+            this.msgBox.Name = "msgBox";
+            this.msgBox.Size = new System.Drawing.Size(158, 20);
+            this.msgBox.TabIndex = 14;
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(308, 276);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(45, 13);
+            this.label4.TabIndex = 15;
+            this.label4.Text = "QUERY";
+            this.label4.Click += new System.EventHandler(this.Label4_Click);
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(311, 318);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(63, 23);
+            this.button3.TabIndex = 16;
+            this.button3.Text = "SEND";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.Button3_Click);
+            // 
             // IOT
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(481, 410);
+            this.Controls.Add(this.button3);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.msgBox);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.proBox);
             this.Controls.Add(this.label2);
@@ -213,6 +246,9 @@
         private System.Windows.Forms.TextBox buffBox;
         private System.Windows.Forms.ComboBox proBox;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.TextBox msgBox;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button button3;
     }
 }
 

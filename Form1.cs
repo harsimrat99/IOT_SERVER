@@ -13,7 +13,11 @@ namespace IOT_SERVER
     public partial class IOT : Form
     {
 
+        public int bfrLen = Encoder.DEFAULT_LENGTH_BUFFER;
+
         NetworkingClient myClient;
+
+        Encoder myEncoder;
 
         public IOT()
         {
@@ -43,6 +47,19 @@ namespace IOT_SERVER
 
             myClient = new NetworkingClient(NetworkingClient.ProtoType.TCP, addr.Text.Trim(), Int32.Parse(portBox.Text.Trim()));
 
+            if (!Int32.TryParse(buffBox.Text.Trim(), out bfrLen))
+            {
+
+                var k = new Action(bufferParsingError);
+
+                this.Invoke(k);
+
+                return;
+
+            }
+
+            myEncoder = new Encoder(bfrLen, "ascii");
+
             try
             {
 
@@ -58,7 +75,17 @@ namespace IOT_SERVER
 
             if (myClient.isConnected()) pnl.BackColor = Color.Green;
 
-            myClient.Disconnect();
+            this.Invoke((MethodInvoker)delegate {
+
+                textBox.AppendText("\nSuccessfully connected to: " + myClient.Ip().ToString());
+
+            });
+
+        }
+
+        private void bufferParsingError() {
+
+            textBox.AppendText("\nCorrupted value entered in buffer length field. Using default value.");
 
         }
 
@@ -72,7 +99,8 @@ namespace IOT_SERVER
         {
             pnl.BackColor = Color.Red;
 
-            backgroundWorker1.CancelAsync();
+            myClient.Disconnect();
+            
         }
 
         private void PictureBox1_Click(object sender, EventArgs e)
@@ -122,6 +150,47 @@ namespace IOT_SERVER
 
         private void ComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
+
+        }
+
+        private void Label4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Button3_Click(object sender, EventArgs e)
+        {
+
+            String message = "";
+
+            if (msgBox.Text.Trim() == "") {
+
+                this.Invoke((MethodInvoker)delegate {
+
+                    textBox.AppendText("\nPlease enter a query in the query field.");
+
+                });
+
+                return;
+
+            }
+
+            else {
+
+                this.Invoke((MethodInvoker)delegate {
+
+                    message = msgBox.Text;
+
+                });
+
+            }
+
+            myEncoder = new Encoder(bfrLen, "ascii");
+
+            message = (Encoding.ASCII.GetString(myEncoder.Encode(Encoding.ASCII.GetBytes(message))));
+
+            textBox.AppendText("\n"+message);
+            
 
         }
     }
