@@ -22,7 +22,9 @@ namespace IOT_SERVER
 
         private void Button1_Click(object sender, EventArgs e)
         {
-            backgroundWorker1.RunWorkerAsync();            
+            backgroundWorker1.RunWorkerAsync();
+
+            Encoding.ASCII.GetBytes("");
 
         }
 
@@ -41,7 +43,18 @@ namespace IOT_SERVER
 
             myClient = new NetworkingClient(NetworkingClient.ProtoType.TCP, addr.Text.Trim(), Int32.Parse(portBox.Text.Trim()));
 
-            myClient.Connect();
+            try
+            {
+
+                myClient.Connect();
+
+            }
+
+            catch (Exception es) {
+
+                Console.WriteLine(es.Message);
+
+            }
 
             if (myClient.isConnected()) pnl.BackColor = Color.Green;
 
@@ -98,6 +111,16 @@ namespace IOT_SERVER
         }
 
         private void IOT_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Label3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void ComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
 
         }

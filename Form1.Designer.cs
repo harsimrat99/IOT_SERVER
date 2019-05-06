@@ -38,6 +38,10 @@
             this.label1 = new System.Windows.Forms.Label();
             this.addr = new System.Windows.Forms.TextBox();
             this.pnl = new System.Windows.Forms.Panel();
+            this.label2 = new System.Windows.Forms.Label();
+            this.buffBox = new System.Windows.Forms.TextBox();
+            this.proBox = new System.Windows.Forms.ComboBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // textBox
@@ -99,7 +103,7 @@
             this.Clear.Name = "Clear";
             this.Clear.Size = new System.Drawing.Size(144, 24);
             this.Clear.TabIndex = 6;
-            this.Clear.Text = "Clear";
+            this.Clear.Text = "Clear Screen";
             this.Clear.UseVisualStyleBackColor = true;
             this.Clear.Click += new System.EventHandler(this.Clear_Click);
             // 
@@ -128,11 +132,53 @@
             this.pnl.Size = new System.Drawing.Size(61, 40);
             this.pnl.TabIndex = 9;
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(308, 91);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(96, 13);
+            this.label2.TabIndex = 11;
+            this.label2.Text = "BUFFER LENGTH";
+            // 
+            // buffBox
+            // 
+            this.buffBox.Location = new System.Drawing.Point(311, 107);
+            this.buffBox.Name = "buffBox";
+            this.buffBox.Size = new System.Drawing.Size(158, 20);
+            this.buffBox.TabIndex = 10;
+            // 
+            // proBox
+            // 
+            this.proBox.FormattingEnabled = true;
+            this.proBox.Items.AddRange(new object[] {
+            "TCP",
+            "UDP"});
+            this.proBox.Location = new System.Drawing.Point(311, 146);
+            this.proBox.Name = "proBox";
+            this.proBox.Size = new System.Drawing.Size(121, 21);
+            this.proBox.TabIndex = 12;
+            this.proBox.SelectedIndexChanged += new System.EventHandler(this.ComboBox1_SelectedIndexChanged);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(308, 130);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(66, 13);
+            this.label3.TabIndex = 13;
+            this.label3.Text = "PROTOCOL";
+            this.label3.Click += new System.EventHandler(this.Label3_Click);
+            // 
             // IOT
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(481, 410);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.proBox);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.buffBox);
             this.Controls.Add(this.pnl);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.addr);
@@ -163,6 +209,10 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox addr;
         private System.Windows.Forms.Panel pnl;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox buffBox;
+        private System.Windows.Forms.ComboBox proBox;
+        private System.Windows.Forms.Label label3;
     }
 }
 
