@@ -193,5 +193,10 @@ namespace IOT_SERVER
             
 
         }
+
+        private void Label5_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 }
