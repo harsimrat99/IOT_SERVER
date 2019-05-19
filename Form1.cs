@@ -64,9 +64,21 @@ namespace IOT_SERVER
 
             NetworkingClient.ProtoType type;
 
-            //type = (proBox.Text == "TCP") ? NetworkingClient.ProtoType.TCP : NetworkingClient.ProtoType.UDP;
+            String text = "" ;
 
-            myClient = new NetworkingClient(NetworkingClient.ProtoType.UDP, addr.Text.Trim(), Int32.Parse(portBox.Text.Trim()), bufferLength);
+            Action accessU = () => text = proBox.SelectedItem.ToString();
+
+            if (InvokeRequired)
+
+                Invoke(accessU);
+
+            else
+
+                accessU();
+
+            type = (text == "TCP") ? NetworkingClient.ProtoType.TCP : NetworkingClient.ProtoType.UDP;
+            
+            myClient = new NetworkingClient(type, addr.Text.Trim(), Int32.Parse(portBox.Text.Trim()), bufferLength);
 
             myEncoder = new Encoder(Encoder.DEFAULT_LENGTH_BUFFER, "ascii");
 

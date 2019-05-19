@@ -257,8 +257,6 @@ namespace IOT_SERVER
 
                 }
 
-
-
             }
 
             catch (SocketException se) {

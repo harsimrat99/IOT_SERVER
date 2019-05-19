@@ -61,7 +61,7 @@ namespace IOT_SERVER
             this.textBox.Name = "textBox";
             this.textBox.ReadOnly = true;
             this.textBox.Size = new System.Drawing.Size(293, 331);
-            this.textBox.TabIndex = 0;
+            this.textBox.TabIndex = 9;
             this.textBox.Text = "";
             this.textBox.TextChanged += new System.EventHandler(this.TextBox_TextChanged);
             // 
@@ -70,7 +70,7 @@ namespace IOT_SERVER
             this.button1.Location = new System.Drawing.Point(12, 375);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(110, 24);
-            this.button1.TabIndex = 1;
+            this.button1.TabIndex = 6;
             this.button1.Text = "Start";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.Button1_Click);
@@ -80,7 +80,7 @@ namespace IOT_SERVER
             this.button2.Location = new System.Drawing.Point(195, 349);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(110, 50);
-            this.button2.TabIndex = 2;
+            this.button2.TabIndex = 7;
             this.button2.Text = "Stop";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.Button2_Click);
@@ -98,7 +98,7 @@ namespace IOT_SERVER
             this.portBox.Location = new System.Drawing.Point(311, 29);
             this.portBox.Name = "portBox";
             this.portBox.Size = new System.Drawing.Size(158, 20);
-            this.portBox.TabIndex = 4;
+            this.portBox.TabIndex = 0;
             // 
             // lblPort
             // 
@@ -106,7 +106,7 @@ namespace IOT_SERVER
             this.lblPort.Location = new System.Drawing.Point(311, 13);
             this.lblPort.Name = "lblPort";
             this.lblPort.Size = new System.Drawing.Size(37, 13);
-            this.lblPort.TabIndex = 5;
+            this.lblPort.TabIndex = 2;
             this.lblPort.Text = "PORT";
             this.lblPort.Click += new System.EventHandler(this.Label1_Click);
             // 
@@ -135,7 +135,7 @@ namespace IOT_SERVER
             this.addr.Location = new System.Drawing.Point(311, 68);
             this.addr.Name = "addr";
             this.addr.Size = new System.Drawing.Size(158, 20);
-            this.addr.TabIndex = 7;
+            this.addr.TabIndex = 1;
             this.addr.TextChanged += new System.EventHandler(this.TextBox1_TextChanged);
             // 
             // pnl
@@ -161,12 +161,11 @@ namespace IOT_SERVER
             this.buffBox.Location = new System.Drawing.Point(311, 107);
             this.buffBox.Name = "buffBox";
             this.buffBox.Size = new System.Drawing.Size(158, 20);
-            this.buffBox.TabIndex = 10;
+            this.buffBox.TabIndex = 2;
             this.buffBox.Text = "Leave blank for default.";
             // 
             // proBox
             // 
-            this.proBox.Enabled = true;
             this.proBox.FormattingEnabled = true;
             this.proBox.Items.AddRange(new object[] {
             "TCP",
@@ -174,7 +173,7 @@ namespace IOT_SERVER
             this.proBox.Location = new System.Drawing.Point(311, 146);
             this.proBox.Name = "proBox";
             this.proBox.Size = new System.Drawing.Size(121, 21);
-            this.proBox.TabIndex = 12;
+            this.proBox.TabIndex = 3;
             this.proBox.SelectedIndexChanged += new System.EventHandler(this.ComboBox1_SelectedIndexChanged);
             // 
             // label3
@@ -192,7 +191,7 @@ namespace IOT_SERVER
             this.msgBox.Location = new System.Drawing.Point(311, 292);
             this.msgBox.Name = "msgBox";
             this.msgBox.Size = new System.Drawing.Size(158, 20);
-            this.msgBox.TabIndex = 14;
+            this.msgBox.TabIndex = 6;
             // 
             // label4
             // 
@@ -209,7 +208,7 @@ namespace IOT_SERVER
             this.button3.Location = new System.Drawing.Point(311, 318);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(63, 23);
-            this.button3.TabIndex = 16;
+            this.button3.TabIndex = 8;
             this.button3.Text = "SEND";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.Button3_Click);
@@ -219,7 +218,7 @@ namespace IOT_SERVER
             this.portBx.Location = new System.Drawing.Point(311, 189);
             this.portBx.Name = "portBx";
             this.portBx.Size = new System.Drawing.Size(158, 20);
-            this.portBx.TabIndex = 17;
+            this.portBx.TabIndex = 4;
             // 
             // label5
             // 
@@ -245,7 +244,7 @@ namespace IOT_SERVER
             this.baudBox.Location = new System.Drawing.Point(311, 228);
             this.baudBox.Name = "baudBox";
             this.baudBox.Size = new System.Drawing.Size(158, 20);
-            this.baudBox.TabIndex = 19;
+            this.baudBox.TabIndex = 5;
             // 
             // button4
             // 
