@@ -39,7 +39,7 @@ namespace IOT_SERVER
 
         public byte[] Encode(byte[] message) {
 
-            if (message.Length >= MAX_LENGTH) throw new FormatException("Message is larger than or equal to the maxmimum size of the buffer.");
+            if (message.Length >= MAX_LENGTH) throw new FormatException("Message is larger than or equal to the maxmimum size of the readBuffer.");
 
             byte[] data = encoding.GetBytes(DateTime.Now.ToString("MM/dd/yyyy$HH:mm"));            
 

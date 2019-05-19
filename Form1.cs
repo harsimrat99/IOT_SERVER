@@ -5,6 +5,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -19,6 +20,10 @@ namespace IOT_SERVER
 
         Encoder myEncoder;
 
+        object myLock = new object();
+
+        Boolean running = true;
+
         public IOT()
         {
             InitializeComponent();
@@ -26,6 +31,8 @@ namespace IOT_SERVER
 
         private void Button1_Click(object sender, EventArgs e)
         {
+            running = true;
+
             backgroundWorker1.RunWorkerAsync();
 
             Encoding.ASCII.GetBytes("");
@@ -45,20 +52,17 @@ namespace IOT_SERVER
                 return;
             }
 
-            myClient = new NetworkingClient(NetworkingClient.ProtoType.TCP, addr.Text.Trim(), Int32.Parse(portBox.Text.Trim()));
+            int bufferLength;
 
-            if (!Int32.TryParse(buffBox.Text.Trim(), out bfrLen))
-            {
+            if (!Int32.TryParse(buffBox.Text.Trim(), out bufferLength)) {
 
-                var k = new Action(bufferParsingError);
-
-                this.Invoke(k);
-
-                return;
+                bufferLength = NetworkingClient.B_SIZE_DEAFULT;
 
             }
 
-            myEncoder = new Encoder(bfrLen, "ascii");
+            myClient = new NetworkingClient(NetworkingClient.ProtoType.TCP, addr.Text.Trim(), Int32.Parse(portBox.Text.Trim()), bufferLength);
+
+            myEncoder = new Encoder(Encoder.DEFAULT_LENGTH_BUFFER, "ascii");
 
             try
             {
@@ -81,6 +85,30 @@ namespace IOT_SERVER
 
             });
 
+            while (!backgroundWorker1.CancellationPending) {
+
+                lock (myLock) {
+
+                    if (!running) return;
+
+                }
+
+                int btsRecv = myClient.read();
+
+                if (btsRecv > 0) {
+
+                    this.Invoke((MethodInvoker)delegate {
+
+                        textBox.AppendText("\nMessage from: " + myClient.Ip().ToString() + " " + Encoding.ASCII.GetString(myClient.readBuffer));
+
+                    });
+
+                }
+
+                Thread.Sleep(100);
+
+            }
+
         }
 
         private void bufferParsingError() {
@@ -97,10 +125,23 @@ namespace IOT_SERVER
 
         private void Button2_Click(object sender, EventArgs e)
         {
+            running = false;
+
+            backgroundWorker1.CancelAsync();
+
             pnl.BackColor = Color.Red;
 
-            myClient.Disconnect();
-            
+            try
+            {
+                myClient.Disconnect();
+            }
+
+            catch (Exception ex) {
+
+                Console.WriteLine(ex.ToString());
+
+            }             
+
         }
 
         private void PictureBox1_Click(object sender, EventArgs e)
@@ -197,6 +238,26 @@ namespace IOT_SERVER
         private void Label5_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void Label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void TextBox_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CheckBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Button4_Click(object sender, EventArgs e)
+        {
+            textBox.ScrollToCaret();
         }
     }
 }

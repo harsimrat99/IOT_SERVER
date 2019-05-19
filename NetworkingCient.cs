@@ -33,13 +33,15 @@ namespace IOT_SERVER
 
         private int timeOut;
 
-        private byte[] buffer;
+        public byte[] readBuffer;
 
-        protected private const int B_SIZE_DEAFULT = 200;
+        protected private int bytesReceived;
 
-        protected private const short PORT_DEFAULT = 8080;
+        public const int B_SIZE_DEAFULT = 200;
 
-        protected private const int TIMEOUT_DEFAULT = 10000;
+        public const short PORT_DEFAULT = 8080;
+
+        public const int TIMEOUT_DEFAULT = 10000;
 
         public enum ProtoType {
 
@@ -84,7 +86,7 @@ namespace IOT_SERVER
 
                     socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Udp);
 
-                    break;     
+                    break;                      
 
             }            
 
@@ -97,6 +99,8 @@ namespace IOT_SERVER
             socket.ReceiveTimeout = TIMEOUT_DEFAULT;
 
             socket.SendBufferSize = bufferLength;
+
+            readBuffer = new byte[this.bufferLength];
 
             return 1;
 
@@ -200,6 +204,15 @@ namespace IOT_SERVER
 
             return 1;
 
+        }
+
+        public int read() {
+
+            if (!(socket.Available > 0)) return -1;
+
+            bytesReceived =  socket.Receive(readBuffer, bufferLength, SocketFlags.None);
+
+            return bytesReceived;
         }
         
 
