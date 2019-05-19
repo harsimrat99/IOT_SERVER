@@ -27,6 +27,8 @@ namespace IOT_SERVER
         public IOT()
         {
             InitializeComponent();
+
+            myEncoder = new Encoder(bfrLen, "ascii");
         }
 
         private void Button1_Click(object sender, EventArgs e)
@@ -60,7 +62,11 @@ namespace IOT_SERVER
 
             }
 
-            myClient = new NetworkingClient(NetworkingClient.ProtoType.TCP, addr.Text.Trim(), Int32.Parse(portBox.Text.Trim()), bufferLength);
+            NetworkingClient.ProtoType type;
+
+            //type = (proBox.Text == "TCP") ? NetworkingClient.ProtoType.TCP : NetworkingClient.ProtoType.UDP;
+
+            myClient = new NetworkingClient(NetworkingClient.ProtoType.UDP, addr.Text.Trim(), Int32.Parse(portBox.Text.Trim()), bufferLength);
 
             myEncoder = new Encoder(Encoder.DEFAULT_LENGTH_BUFFER, "ascii");
 
@@ -93,7 +99,7 @@ namespace IOT_SERVER
 
                 }
 
-                int btsRecv = myClient.read();
+                int btsRecv = myClient.Read();
 
                 if (btsRecv > 0) {
 
@@ -199,6 +205,7 @@ namespace IOT_SERVER
 
         }
 
+        //Send button
         private void Button3_Click(object sender, EventArgs e)
         {
 
@@ -224,14 +231,9 @@ namespace IOT_SERVER
 
                 });
 
-            }
+            }            
 
-            myEncoder = new Encoder(bfrLen, "ascii");
-
-            message = (Encoding.ASCII.GetString(myEncoder.Encode(Encoding.ASCII.GetBytes(message))));
-
-            textBox.AppendText("\n"+message);
-            
+            myClient.Write(myEncoder.Encode(Encoding.ASCII.GetBytes(message)));                        
 
         }
 

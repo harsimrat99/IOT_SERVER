@@ -35,13 +35,17 @@ namespace IOT_SERVER
 
         public byte[] readBuffer;
 
+        private byte[] recvPacket;
+
         protected private int bytesReceived;
 
         public const int B_SIZE_DEAFULT = 200;
 
         public const short PORT_DEFAULT = 8080;
 
-        public const int TIMEOUT_DEFAULT = 10000;
+        public const int TIMEOUT_DEFAULT = 3000;
+
+        public const int DEFAULT_RETRIES = 3;
 
         public enum ProtoType {
 
@@ -74,23 +78,25 @@ namespace IOT_SERVER
 
             bufferLength = buffSize;
 
+            recvPacket = new byte[100];
+
             switch (_type) {
 
                 case ProtoType.TCP:
 
                     socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
+                    socket.NoDelay = true;
+
                     break;
 
                 case ProtoType.UDP:
 
-                    socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Udp);
+                    socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);                     
 
                     break;                      
 
-            }            
-
-            socket.NoDelay = true;
+            }                        
 
             socket.Blocking = true;
 
@@ -188,7 +194,7 @@ namespace IOT_SERVER
 
         public IPAddress Ip() {
 
-            Console.WriteLine(IPAddress.Parse(((IPEndPoint)socket.RemoteEndPoint).Address.ToString()));
+            //Console.WriteLine(IPAddress.Parse(((IPEndPoint)socket.RemoteEndPoint).Address.ToString()));
 
             return IPAddress.Parse(((IPEndPoint)socket.RemoteEndPoint).Address.ToString());
 
@@ -196,25 +202,85 @@ namespace IOT_SERVER
 
         public int Write(String msg) {
 
-            return 1;
+            throw new NotImplementedException();
 
         }
 
-        public int Write(int msg) {
+        public int Write(byte[] msg) {
 
-            return 1;
+            int sentLength = msg.Length;
+
+            try {
+
+                if (this._type == ProtoType.TCP) sentLength = socket.Send(msg, SocketFlags.None);
+
+                else if (this._type == ProtoType.UDP) {
+
+                    int tries = 0;
+
+                    bool received = false;
+
+                    do
+                    {
+
+                        socket.SendTo(msg, (EndPoint)currentEndpoint);
+
+                        Console.WriteLine("Sent {0} bytes to the server.\n", msg.Length);
+
+                        EndPoint endp = (EndPoint)currentEndpoint;
+
+                        try {
+
+                            socket.ReceiveFrom(recvPacket, ref endp);
+
+                            received = true;
+
+                        }
+                        catch (SocketException se) {                            
+
+                            if (se.ErrorCode == 10060) Console.WriteLine("Timeout reached. Try {0} / {1}\n", ++tries, DEFAULT_RETRIES);
+
+                            else Console.WriteLine("Socket exception thrown: {0}\n", se.ErrorCode);
+
+                        }
+
+
+
+                    } while (tries < DEFAULT_RETRIES && !received);
+
+                    if (received) {
+
+                        Console.WriteLine("Received {0} bytes from {1} : {2}\n", recvPacket.Length, currentEndpoint.Address, recvPacket);
+
+                    }
+
+
+                }
+
+
+
+            }
+
+            catch (SocketException se) {
+
+                Console.WriteLine(se.Message);
+
+                return -1;
+
+            }
+
+            return sentLength;
 
         }
 
-        public int read() {
+        public int Read() {
 
             if (!(socket.Available > 0)) return -1;
 
-            bytesReceived =  socket.Receive(readBuffer, bufferLength, SocketFlags.None);
-
+            bytesReceived = socket.Receive(readBuffer, bufferLength, SocketFlags.None);
+                        
             return bytesReceived;
         }
         
-
     }
 }

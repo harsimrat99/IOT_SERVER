@@ -166,7 +166,7 @@ namespace IOT_SERVER
             // 
             // proBox
             // 
-            this.proBox.Enabled = false;
+            this.proBox.Enabled = true;
             this.proBox.FormattingEnabled = true;
             this.proBox.Items.AddRange(new object[] {
             "TCP",
