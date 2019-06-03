@@ -15,46 +15,55 @@ public class SimpleServer
 
     private const int DEFAULT_PORT = 8080;
 
-    private const int DEAFULT_LISTENERS = 5;
+    private const int DEFAULT_LISTENERS = 5;
 
     private const int DEAFULT_BUFF_SIZE = 100;
 
     private int Port { get; set; }
 
+    private int Listeners { get; set; }
+
     protected byte[] recvBuffer;
 
-    private Socket Socket = null, Client = null;
+    private Socket server = null;
+        
+    private Socket Client = null;
 
-    public SimpleServer(int port, int listeners)
+    private int i = 0;
+
+    public const int DEFAULT_SERVER_PORT = 80;
+
+    public  SimpleServer(int port, int listeners)
 	{
 
-        init(port, listeners);
+        Listeners = listeners;
+
+        Port = port;
 
     }
 
 
     public  SimpleServer(int port) {
 
-        init(port, DEAFULT_LISTENERS);
+        Port = port;
+
+        Listeners = DEFAULT_LISTENERS;
 
     }
 
-    protected void init(int port, int listeners) {
-
-        Port = port;
+     public string Init() {
+        
 
         try
         {
 
             Console.WriteLine("Trying to Listen on port {0}.", Port);
 
-            Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-            Socket.Bind(new IPEndPoint(IPAddress.Any, Port));
+            server.Bind(new IPEndPoint(IPAddress.Any, Port));           
 
-            Socket.Blocking = false;
-
-            Socket.Listen(listeners);
+            server.Listen(100);
 
         }
 
@@ -63,7 +72,7 @@ public class SimpleServer
 
             Console.WriteLine(e.Message);
 
-            return;
+            return "PROB";
 
         }
 
@@ -76,7 +85,7 @@ public class SimpleServer
 
         recvBuffer = new byte[DEAFULT_BUFF_SIZE];
 
-
+        return "SUCCESFULL INITED";
 
     }
 
@@ -84,37 +93,57 @@ public class SimpleServer
 
         int bytesReceived;
 
-        try
-        {
+            i++;
 
-            Client = Socket.Accept();
-
-            Console.WriteLine("Handling Client at {0}.", Client.RemoteEndPoint);
-
-            if (Client.Available > 0)
+            try
             {
 
-                bytesReceived = Client.Receive(recvBuffer, recvBuffer.Length, SocketFlags.None);
+                Console.WriteLine("Trial {0}", i);
 
-                return Encoding.ASCII.GetString(recvBuffer);
+                Client = server.Accept();
+
+                Console.WriteLine("Done Accepting");
+
+                Console.WriteLine("Handling Client at {0}.", (IPEndPoint) (Client.RemoteEndPoint));
+
+                 return "THING";
+
+                if (Client.Available > 0)
+                {
+
+                    bytesReceived = Client.Receive(recvBuffer, recvBuffer.Length, SocketFlags.None);
+
+                    Console.WriteLine( "Got stuff!");
+
+                    return Encoding.ASCII.GetString(recvBuffer);
+
+                }
+
+                else return null;
 
             }
 
-            else return null;
+            catch (SocketException se)
+            {
 
-        }
+                Console.WriteLine(se.Message);
 
-        catch (SocketException se) {
+                if (Client == null) {
 
-            Console.WriteLine(se.Message);
+                    Console.WriteLine("Error Eroor!!");
 
-            if (Client == null) return null;
+                return "prob";
 
-            else Client.Close();
+                }
 
-            return null;
+                else Client.Close();               
 
-        }
+            }        
+
+        return null;
+
     }
     
+   
+
 }

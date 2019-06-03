@@ -36,114 +36,110 @@ namespace IOT_SERVER
         {
             running = true;
 
-            backgroundWorker1.RunWorkerAsync();
-
-            Encoding.ASCII.GetBytes("");
+            backgroundWorker1.RunWorkerAsync();           
 
         }
 
         private void BackgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
 
-
-            SimpleServer server = new SimpleServer(8080);
-
-            Stopwatch watch = new Stopwatch();
-
-            long start = watch.ElapsedMilliseconds;
-
-            string s =  server.GetMessage();
-
             this.Invoke((MethodInvoker)delegate
             {
 
-                textBox.AppendText("\nMessage : " + s);
+                textBox.AppendText("\nMessage : " );
 
             });
 
 
-            //if (portBox.Text == "" || addr.Text == "")
+            if (portBox.Text == "" || addr.Text == "")
+            {
+
+                var k = new Action(portError);
+
+                this.Invoke(k);
+
+                return;
+            }
+
+            int bufferLength;
+
+            if (!Int32.TryParse(buffBox.Text.Trim(), out bufferLength))
+            {
+
+                bufferLength = NetworkingClient.B_SIZE_DEAFULT;
+
+            }
+
+            NetworkingClient.ProtoType type;
+
+            String text = "";
+
+            Action accessU = () => text = proBox.SelectedItem.ToString();
+
+            if (InvokeRequired)
+
+                Invoke(accessU);
+
+            else
+
+                accessU();
+
+            type = (text == "TCP") ? NetworkingClient.ProtoType.TCP : NetworkingClient.ProtoType.UDP;
+
+            myClient = new NetworkingClient(type, addr.Text.Trim(), Int32.Parse(portBox.Text.Trim()), bufferLength);
+
+            myEncoder = new Encoder(Encoder.DEFAULT_LENGTH_BUFFER, "ascii");
+
+            try
+            {
+
+                myClient.Connect();
+
+            }
+
+            catch (Exception es)
+            {
+
+                Console.WriteLine(es.Message);
+
+            }
+
+            if (myClient.isConnected()) pnl.BackColor = Color.Green;
+
+            //this.Invoke((MethodInvoker)delegate
             //{
-
-            //    var k = new Action(portError);
-
-            //    this.Invoke(k);
-
-            //    return;
-            //}
-
-            //int bufferLength;
-
-            //if (!Int32.TryParse(buffBox.Text.Trim(), out bufferLength)) {
-
-            //    bufferLength = NetworkingClient.B_SIZE_DEAFULT;
-
-            //}
-
-            //NetworkingClient.ProtoType type;
-
-            //String text = "" ;
-
-            //Action accessU = () => text = proBox.SelectedItem.ToString();
-
-            //if (InvokeRequired)
-
-            //    Invoke(accessU);
-
-            //else
-
-            //    accessU();
-
-            //type = (text == "TCP") ? NetworkingClient.ProtoType.TCP : NetworkingClient.ProtoType.UDP;
-
-            //myClient = new NetworkingClient(type, addr.Text.Trim(), Int32.Parse(portBox.Text.Trim()), bufferLength);
-
-            //myEncoder = new Encoder(Encoder.DEFAULT_LENGTH_BUFFER, "ascii");
-
-            //try
-            //{
-
-            //    myClient.Connect();
-
-            //}
-
-            //catch (Exception es) {
-
-            //    Console.WriteLine(es.Message);
-
-            //}
-
-            //if (myClient.isConnected()) pnl.BackColor = Color.Green;
-
-            //this.Invoke((MethodInvoker)delegate {
 
             //    textBox.AppendText("\nSuccessfully connected to: " + myClient.Ip().ToString());
 
             //});
 
-            //while (!backgroundWorker1.CancellationPending) {
+            while (!backgroundWorker1.CancellationPending)
+            {
 
-            //    lock (myLock) {
+                lock (myLock)
+                {
 
-            //        if (!running) return;
+                    if (!running) return;
 
-            //    }
+                }
 
-            //    int btsRecv = myClient.Read();
+                int btsRecv = myClient.Read();
 
-            //    if (btsRecv > 0) {
+                if (btsRecv > 0)
+                {
 
-            //        this.Invoke((MethodInvoker)delegate {
+                    this.Invoke((MethodInvoker)delegate
+                    {
 
-            //            textBox.AppendText("\nMessage from: " + myClient.Ip().ToString() + " " + Encoding.ASCII.GetString(myClient.readBuffer));
+                        textBox.AppendText("\nMessage from: " + myClient.Ip().ToString() + " " + Encoding.ASCII.GetString(myClient.readBuffer));
 
-            //        });
+                    });
 
-            //    }
+                }
 
-            //    Thread.Sleep(100);
+                Thread.Sleep(100);
 
-            //}
+            }
 
         }
 
@@ -164,6 +160,8 @@ namespace IOT_SERVER
             running = false;
 
             backgroundWorker1.CancelAsync();
+
+            backgroundWorker2.CancelAsync();
 
             pnl.BackColor = Color.Red;
 
@@ -290,6 +288,56 @@ namespace IOT_SERVER
         private void Button4_Click(object sender, EventArgs e)
         {
             textBox.ScrollToCaret();
+        }
+
+        private void BackgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
+        {
+
+            int portNumber;
+            
+
+            if (!Int32.TryParse(portBox.Text.Trim(), out portNumber)) {
+
+                portNumber = SimpleServer.DEFAULT_SERVER_PORT;
+
+            }
+
+            SimpleServer Server = new SimpleServer(portNumber);
+
+            String s = Server.Init();
+
+            this.Invoke((MethodInvoker)delegate {
+
+                textBox.AppendText("\n" + s);
+
+            });            
+
+            for (; ; ) {
+
+                Thread.Sleep(50);
+
+                s =(Server.GetMessage());
+
+                if (s != null) {
+
+
+                    this.Invoke((MethodInvoker)delegate {
+
+                        textBox.AppendText("\n" + s);
+
+                    });
+                }
+
+            }
+
+        }
+
+        private void Button5_Click(object sender, EventArgs e)
+        {
+            backgroundWorker2.RunWorkerAsync();
+
+            pnl.BackColor = Color.Green;
+
         }
     }
 }

@@ -52,6 +52,8 @@ namespace IOT_SERVER
             this.label6 = new System.Windows.Forms.Label();
             this.baudBox = new System.Windows.Forms.TextBox();
             this.button4 = new System.Windows.Forms.Button();
+            this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
+            this.button5 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // textBox
@@ -256,11 +258,26 @@ namespace IOT_SERVER
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.Button4_Click);
             // 
+            // backgroundWorker2
+            // 
+            this.backgroundWorker2.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker2_DoWork);
+            // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(13, 350);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(109, 23);
+            this.button5.TabIndex = 22;
+            this.button5.Text = "Start Server";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.Button5_Click);
+            // 
             // IOT
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(484, 411);
+            this.Controls.Add(this.button5);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.baudBox);
@@ -318,6 +335,8 @@ namespace IOT_SERVER
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox baudBox;
         private System.Windows.Forms.Button button4;
+        private System.ComponentModel.BackgroundWorker backgroundWorker2;
+        private System.Windows.Forms.Button button5;
     }
 }
 

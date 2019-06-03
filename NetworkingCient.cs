@@ -70,7 +70,15 @@ namespace IOT_SERVER
 
             this.port = port;
 
+            Console.WriteLine(server);
+
             host = Dns.GetHostEntry(server);
+
+            for (int l = 0; l < host.AddressList.Length; l++) {
+
+                Console.WriteLine(host.AddressList[l]);
+
+            }
 
             currentEndpoint = new IPEndPoint(host.AddressList[0], port);
 
@@ -196,7 +204,12 @@ namespace IOT_SERVER
 
             //Console.WriteLine(IPAddress.Parse(((IPEndPoint)socket.RemoteEndPoint).Address.ToString()));
 
-            return IPAddress.Parse(((IPEndPoint)socket.RemoteEndPoint).Address.ToString());
+            try { return IPAddress.Parse(((IPEndPoint)socket.RemoteEndPoint).Address.ToString()); }
+
+            catch (Exception e) {
+
+                return null;
+            }
 
         }
 
