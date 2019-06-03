@@ -17,7 +17,7 @@ namespace IOT_SERVER
          * 
          */
 
-        private NetworkStream netStream;
+        //private NetworkStream netStream;
 
         private IPEndPoint currentEndpoint;
 

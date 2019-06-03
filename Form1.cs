@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -44,88 +45,105 @@ namespace IOT_SERVER
         private void BackgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
 
-            if (portBox.Text == "" || addr.Text == "")
+
+            SimpleServer server = new SimpleServer(8080);
+
+            Stopwatch watch = new Stopwatch();
+
+            long start = watch.ElapsedMilliseconds;
+
+            string s =  server.GetMessage();
+
+            this.Invoke((MethodInvoker)delegate
             {
 
-                var k = new Action(portError);
-
-                this.Invoke(k);
-
-                return;
-            }
-
-            int bufferLength;
-
-            if (!Int32.TryParse(buffBox.Text.Trim(), out bufferLength)) {
-
-                bufferLength = NetworkingClient.B_SIZE_DEAFULT;
-
-            }
-
-            NetworkingClient.ProtoType type;
-
-            String text = "" ;
-
-            Action accessU = () => text = proBox.SelectedItem.ToString();
-
-            if (InvokeRequired)
-
-                Invoke(accessU);
-
-            else
-
-                accessU();
-
-            type = (text == "TCP") ? NetworkingClient.ProtoType.TCP : NetworkingClient.ProtoType.UDP;
-            
-            myClient = new NetworkingClient(type, addr.Text.Trim(), Int32.Parse(portBox.Text.Trim()), bufferLength);
-
-            myEncoder = new Encoder(Encoder.DEFAULT_LENGTH_BUFFER, "ascii");
-
-            try
-            {
-
-                myClient.Connect();
-
-            }
-
-            catch (Exception es) {
-
-                Console.WriteLine(es.Message);
-
-            }
-
-            if (myClient.isConnected()) pnl.BackColor = Color.Green;
-
-            this.Invoke((MethodInvoker)delegate {
-
-                textBox.AppendText("\nSuccessfully connected to: " + myClient.Ip().ToString());
+                textBox.AppendText("\nMessage : " + s);
 
             });
 
-            while (!backgroundWorker1.CancellationPending) {
 
-                lock (myLock) {
+            //if (portBox.Text == "" || addr.Text == "")
+            //{
 
-                    if (!running) return;
+            //    var k = new Action(portError);
 
-                }
+            //    this.Invoke(k);
 
-                int btsRecv = myClient.Read();
+            //    return;
+            //}
 
-                if (btsRecv > 0) {
+            //int bufferLength;
 
-                    this.Invoke((MethodInvoker)delegate {
+            //if (!Int32.TryParse(buffBox.Text.Trim(), out bufferLength)) {
 
-                        textBox.AppendText("\nMessage from: " + myClient.Ip().ToString() + " " + Encoding.ASCII.GetString(myClient.readBuffer));
+            //    bufferLength = NetworkingClient.B_SIZE_DEAFULT;
 
-                    });
+            //}
 
-                }
+            //NetworkingClient.ProtoType type;
 
-                Thread.Sleep(100);
+            //String text = "" ;
 
-            }
+            //Action accessU = () => text = proBox.SelectedItem.ToString();
+
+            //if (InvokeRequired)
+
+            //    Invoke(accessU);
+
+            //else
+
+            //    accessU();
+
+            //type = (text == "TCP") ? NetworkingClient.ProtoType.TCP : NetworkingClient.ProtoType.UDP;
+
+            //myClient = new NetworkingClient(type, addr.Text.Trim(), Int32.Parse(portBox.Text.Trim()), bufferLength);
+
+            //myEncoder = new Encoder(Encoder.DEFAULT_LENGTH_BUFFER, "ascii");
+
+            //try
+            //{
+
+            //    myClient.Connect();
+
+            //}
+
+            //catch (Exception es) {
+
+            //    Console.WriteLine(es.Message);
+
+            //}
+
+            //if (myClient.isConnected()) pnl.BackColor = Color.Green;
+
+            //this.Invoke((MethodInvoker)delegate {
+
+            //    textBox.AppendText("\nSuccessfully connected to: " + myClient.Ip().ToString());
+
+            //});
+
+            //while (!backgroundWorker1.CancellationPending) {
+
+            //    lock (myLock) {
+
+            //        if (!running) return;
+
+            //    }
+
+            //    int btsRecv = myClient.Read();
+
+            //    if (btsRecv > 0) {
+
+            //        this.Invoke((MethodInvoker)delegate {
+
+            //            textBox.AppendText("\nMessage from: " + myClient.Ip().ToString() + " " + Encoding.ASCII.GetString(myClient.readBuffer));
+
+            //        });
+
+            //    }
+
+            //    Thread.Sleep(100);
+
+            //}
 
         }
 
