@@ -33,6 +33,8 @@ public class SimpleServer
 
     public const int DEFAULT_SERVER_PORT = 80;
 
+    public const int DEFAULT_TIMEOUT_RECEIVE = 1000;
+
     public  SimpleServer(int port, int listeners)
 	{
 
@@ -61,7 +63,9 @@ public class SimpleServer
 
             server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-            server.Bind(new IPEndPoint(IPAddress.Any, Port));           
+            server.Bind(new IPEndPoint(IPAddress.Any, Port));
+
+            server.ReceiveTimeout = DEFAULT_TIMEOUT_RECEIVE;
 
             server.Listen(100);
 
@@ -85,7 +89,7 @@ public class SimpleServer
 
         recvBuffer = new byte[DEAFULT_BUFF_SIZE];
 
-        return "SUCCESFULL INITED";
+        return "SUCCESFULL INITIALISED AT PORT " + Port.ToString();
 
     }
 
@@ -105,21 +109,13 @@ public class SimpleServer
                 Console.WriteLine("Done Accepting");
 
                 Console.WriteLine("Handling Client at {0}.", (IPEndPoint) (Client.RemoteEndPoint));
+                 
+                bytesReceived = Client.Receive(recvBuffer, recvBuffer.Length, SocketFlags.None);
 
-                 return "THING";
+                Console.WriteLine( "Got stuff!");
 
-                if (Client.Available > 0)
-                {
-
-                    bytesReceived = Client.Receive(recvBuffer, recvBuffer.Length, SocketFlags.None);
-
-                    Console.WriteLine( "Got stuff!");
-
-                    return Encoding.ASCII.GetString(recvBuffer);
-
-                }
-
-                else return null;
+                return "THING" + Client.RemoteEndPoint.ToString() + Encoding.ASCII.GetString(recvBuffer);
+                             
 
             }
 
@@ -132,7 +128,7 @@ public class SimpleServer
 
                     Console.WriteLine("Error Eroor!!");
 
-                return "prob";
+                return "PROBLEM: " + se.Message;
 
                 }
 

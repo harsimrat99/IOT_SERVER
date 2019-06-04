@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.VisualBasic;
 
 namespace IOT_SERVER
 {
@@ -51,7 +52,7 @@ namespace IOT_SERVER
             });
 
 
-            if (portBox.Text == "" || addr.Text == "")
+            if (portBox.Text == "" || addressBox.Text == "")
             {
 
                 var k = new Action(portError);
@@ -63,7 +64,7 @@ namespace IOT_SERVER
 
             int bufferLength;
 
-            if (!Int32.TryParse(buffBox.Text.Trim(), out bufferLength))
+            if (!Int32.TryParse(bufferLengthBox.Text.Trim(), out bufferLength))
             {
 
                 bufferLength = NetworkingClient.B_SIZE_DEAFULT;
@@ -74,7 +75,7 @@ namespace IOT_SERVER
 
             String text = "";
 
-            Action accessU = () => text = proBox.SelectedItem.ToString();
+            Action accessU = () => text = protocolBox.SelectedItem.ToString();
 
             if (InvokeRequired)
 
@@ -86,7 +87,7 @@ namespace IOT_SERVER
 
             type = (text == "TCP") ? NetworkingClient.ProtoType.TCP : NetworkingClient.ProtoType.UDP;
 
-            myClient = new NetworkingClient(type, addr.Text.Trim(), Int32.Parse(portBox.Text.Trim()), bufferLength);
+            myClient = new NetworkingClient(type, addressBox.Text.Trim(), Int32.Parse(portBox.Text.Trim()), bufferLength);
 
             myEncoder = new Encoder(Encoder.DEFAULT_LENGTH_BUFFER, "ascii");
 
@@ -337,6 +338,81 @@ namespace IOT_SERVER
             backgroundWorker2.RunWorkerAsync();
 
             pnl.BackColor = Color.Green;
+
+        }
+
+        private void Label7_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void PortBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            AddToCombo(portBox);
+        }
+
+        private void AddressBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (addressBox.SelectedIndex == portBox.Items.Count - 1)
+            {
+
+                string newItem = Interaction.InputBox("Add a new port", "Add a port", null);
+
+                if (newItem != null)
+                {
+
+                    addressBox.Items.Insert(portBox.Items.Count - 1, newItem);
+
+                    addressBox.SelectedIndex = portBox.Items.Count - 2;
+
+                }
+
+            }
+        }
+
+        private void AddToCombo(System.Windows.Forms.ComboBox box) {
+
+            String s = "";
+
+            if (box.SelectedIndex == box.Items.Count - 1)
+            {
+
+                 s = Interaction.InputBox("Add an item", "Add an item", null);
+
+                if (s != null)
+                {
+
+                    box.Items.Insert(portBox.Items.Count - 1, s);
+
+                    box.SelectedIndex = portBox.Items.Count - 2;
+
+                }
+
+            }
+           
+        }
+
+        private void BufferLengthBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (bufferLengthBox.SelectedIndex == portBox.Items.Count - 1)
+            {
+
+                string newItem = Interaction.InputBox("Add a new port", "Add a port", null);
+
+                if (newItem != null)
+                {
+
+                    bufferLengthBox.Items.Insert(portBox.Items.Count - 1, newItem);
+
+                    bufferLengthBox.SelectedIndex = portBox.Items.Count - 2;
+
+                }
+
+            }
+        }
+
+        private void BackgroundWorker3_DoWork(object sender, DoWorkEventArgs e)
+        {
 
         }
     }
