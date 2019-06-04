@@ -112,14 +112,20 @@ public class SimpleServer
                  
                 bytesReceived = Client.Receive(recvBuffer, recvBuffer.Length, SocketFlags.None);
 
+               if (bytesReceived > 0) {
+
+                Client.Send(recvBuffer, bytesReceived, SocketFlags.None);
+
+                }
+
                 Console.WriteLine( "Got stuff!");
 
-                return "THING" + Client.RemoteEndPoint.ToString() + Encoding.ASCII.GetString(recvBuffer);
+                return "THING " + Client.RemoteEndPoint.ToString() + Encoding.ASCII.GetString(recvBuffer);
                              
 
             }
 
-            catch (SocketException se)
+            catch (Exception se)
             {
 
                 Console.WriteLine(se.Message);
@@ -128,11 +134,9 @@ public class SimpleServer
 
                     Console.WriteLine("Error Eroor!!");
 
-                return "PROBLEM: " + se.Message;
+                    return "PROBLEM: " + se.Message;
 
-                }
-
-                else Client.Close();               
+                }                              
 
             }        
 

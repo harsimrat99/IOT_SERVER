@@ -291,10 +291,9 @@ namespace IOT_SERVER
         private void BackgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
         {
 
-            int portNumber;
-            
+            int portNumber = 0;            
 
-            if (!Int32.TryParse(portBox.Text.Trim(), out portNumber)) {
+            if (!Int32.TryParse(GetComboSelectedText(portBox).Trim(), out portNumber)) {
 
                 portNumber = SimpleServer.DEFAULT_SERVER_PORT;
 
@@ -304,13 +303,9 @@ namespace IOT_SERVER
 
             String s = Server.Init();
 
-            this.Invoke((MethodInvoker)delegate {
+            AppendText(s);
 
-                textBox.AppendText("\n" + s);
-
-            });            
-
-            for (; ; ) {
+            for (; running == true ; ) {
 
                 Thread.Sleep(50);
 
@@ -318,12 +313,8 @@ namespace IOT_SERVER
 
                 if (s != null) {
 
+                    AppendText(s);
 
-                    this.Invoke((MethodInvoker)delegate {
-
-                        textBox.AppendText("\n" + s);
-
-                    });
                 }
 
             }
@@ -332,7 +323,10 @@ namespace IOT_SERVER
 
         private void Button5_Click(object sender, EventArgs e)
         {
+
             backgroundWorker2.RunWorkerAsync();
+
+            running = true;
 
             pnl.BackColor = Color.Green;
 
@@ -346,6 +340,16 @@ namespace IOT_SERVER
         private void PortBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             AddToCombo(portBox);
+        }
+
+        private void AppendText(string s) {
+
+            this.Invoke((MethodInvoker)delegate {
+
+                textBox.AppendText("\n" + s);
+
+            });
+
         }
 
         private void AddressBox_SelectedIndexChanged(object sender, EventArgs e)
