@@ -52,7 +52,7 @@ namespace IOT_SERVER
             });
 
 
-            if (portBox.Text == "" || addressBox.Text == "")
+            if (portBox.SelectedItem.ToString() == "" || addressBox.SelectedItem.ToString() == (string) "")
             {
 
                 var k = new Action(portError);
@@ -353,21 +353,7 @@ namespace IOT_SERVER
 
         private void AddressBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (addressBox.SelectedIndex == portBox.Items.Count - 1)
-            {
-
-                string newItem = Interaction.InputBox("Add a new port", "Add a port", null);
-
-                if (newItem != null)
-                {
-
-                    addressBox.Items.Insert(portBox.Items.Count - 1, newItem);
-
-                    addressBox.SelectedIndex = portBox.Items.Count - 2;
-
-                }
-
-            }
+            AddToCombo(addressBox);
         }
 
         private void AddToCombo(System.Windows.Forms.ComboBox box) {
@@ -382,9 +368,9 @@ namespace IOT_SERVER
                 if (s != null)
                 {
 
-                    box.Items.Insert(portBox.Items.Count - 1, s);
+                    box.Items.Insert(box.Items.Count - 1, s);
 
-                    box.SelectedIndex = portBox.Items.Count - 2;
+                    box.SelectedIndex = box.Items.Count - 2;
 
                 }
 
@@ -394,21 +380,7 @@ namespace IOT_SERVER
 
         private void BufferLengthBox_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (bufferLengthBox.SelectedIndex == portBox.Items.Count - 1)
-            {
-
-                string newItem = Interaction.InputBox("Add a new port", "Add a port", null);
-
-                if (newItem != null)
-                {
-
-                    bufferLengthBox.Items.Insert(portBox.Items.Count - 1, newItem);
-
-                    bufferLengthBox.SelectedIndex = portBox.Items.Count - 2;
-
-                }
-
-            }
+            AddToCombo(bufferLengthBox);
         }
 
         private void BackgroundWorker3_DoWork(object sender, DoWorkEventArgs e)

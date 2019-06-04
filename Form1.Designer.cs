@@ -150,6 +150,7 @@ namespace IOT_SERVER
             this.protocolBox.Items.AddRange(new object[] {
             "TCP",
             "UDP"});
+            protocolBox.SelectedIndex = 0;
             this.protocolBox.Location = new System.Drawing.Point(602, 149);
             this.protocolBox.Name = "protocolBox";
             this.protocolBox.Size = new System.Drawing.Size(158, 21);
@@ -261,6 +262,7 @@ namespace IOT_SERVER
             "30000",
             "30001",
             "Add"});
+            portBox.SelectedIndex = 0;
             this.portBox.Location = new System.Drawing.Point(602, 31);
             this.portBox.Name = "portBox";
             this.portBox.Size = new System.Drawing.Size(158, 21);
@@ -273,7 +275,8 @@ namespace IOT_SERVER
             this.addressBox.Items.AddRange(new object[] {
             "exams.skule.ca",
             "23.100.17.104",
-            "52.20.16.20"});
+            "52.20.16.20", "Add"});
+            addressBox.SelectedIndex = 0;
             this.addressBox.Location = new System.Drawing.Point(602, 70);
             this.addressBox.Name = "addressBox";
             this.addressBox.Size = new System.Drawing.Size(158, 21);
@@ -291,11 +294,12 @@ namespace IOT_SERVER
             250,
             300,
             350,
-            400});
+            400, "Add"});
             this.bufferLengthBox.Location = new System.Drawing.Point(602, 110);
             this.bufferLengthBox.Name = "bufferLengthBox";
             this.bufferLengthBox.Size = new System.Drawing.Size(158, 21);
             this.bufferLengthBox.TabIndex = 25;
+            bufferLengthBox.SelectedIndex = 0;
             this.bufferLengthBox.SelectedIndexChanged += new System.EventHandler(this.BufferLengthBox_SelectedIndexChanged);
             // 
             // backgroundWorker3
