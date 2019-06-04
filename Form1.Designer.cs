@@ -54,7 +54,6 @@ namespace IOT_SERVER
             this.portBox = new System.Windows.Forms.ComboBox();
             this.addressBox = new System.Windows.Forms.ComboBox();
             this.bufferLengthBox = new System.Windows.Forms.ComboBox();
-            this.backgroundWorker3 = new System.ComponentModel.BackgroundWorker();
             this.SuspendLayout();
             // 
             // textBox
@@ -150,7 +149,6 @@ namespace IOT_SERVER
             this.protocolBox.Items.AddRange(new object[] {
             "TCP",
             "UDP"});
-            protocolBox.SelectedIndex = 0;
             this.protocolBox.Location = new System.Drawing.Point(602, 149);
             this.protocolBox.Name = "protocolBox";
             this.protocolBox.Size = new System.Drawing.Size(158, 21);
@@ -241,6 +239,7 @@ namespace IOT_SERVER
             // 
             // backgroundWorker2
             // 
+            this.backgroundWorker2.WorkerSupportsCancellation = true;
             this.backgroundWorker2.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker2_DoWork);
             // 
             // button5
@@ -262,7 +261,6 @@ namespace IOT_SERVER
             "30000",
             "30001",
             "Add"});
-            portBox.SelectedIndex = 0;
             this.portBox.Location = new System.Drawing.Point(602, 31);
             this.portBox.Name = "portBox";
             this.portBox.Size = new System.Drawing.Size(158, 21);
@@ -275,8 +273,8 @@ namespace IOT_SERVER
             this.addressBox.Items.AddRange(new object[] {
             "exams.skule.ca",
             "23.100.17.104",
-            "52.20.16.20", "Add"});
-            addressBox.SelectedIndex = 0;
+            "52.20.16.20",
+            "Add"});
             this.addressBox.Location = new System.Drawing.Point(602, 70);
             this.addressBox.Name = "addressBox";
             this.addressBox.Size = new System.Drawing.Size(158, 21);
@@ -294,17 +292,13 @@ namespace IOT_SERVER
             250,
             300,
             350,
-            400, "Add"});
+            400,
+            "Add"});
             this.bufferLengthBox.Location = new System.Drawing.Point(602, 110);
             this.bufferLengthBox.Name = "bufferLengthBox";
             this.bufferLengthBox.Size = new System.Drawing.Size(158, 21);
             this.bufferLengthBox.TabIndex = 25;
-            bufferLengthBox.SelectedIndex = 0;
             this.bufferLengthBox.SelectedIndexChanged += new System.EventHandler(this.BufferLengthBox_SelectedIndexChanged);
-            // 
-            // backgroundWorker3
-            // 
-            this.backgroundWorker3.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker3_DoWork);
             // 
             // IOT
             // 
@@ -371,7 +365,6 @@ namespace IOT_SERVER
         private System.Windows.Forms.ComboBox portBox;
         private System.Windows.Forms.ComboBox addressBox;
         private System.Windows.Forms.ComboBox bufferLengthBox;
-        private System.ComponentModel.BackgroundWorker backgroundWorker3;
     }
 }
 

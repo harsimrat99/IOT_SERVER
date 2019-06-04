@@ -20,6 +20,8 @@ namespace IOT_SERVER
 
         NetworkingClient myClient;
 
+        SimpleServer Server;
+
         Encoder myEncoder;
 
         object myLock = new object();
@@ -44,15 +46,7 @@ namespace IOT_SERVER
         private void BackgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
 
-            this.Invoke((MethodInvoker)delegate
-            {
-
-                textBox.AppendText("\nMessage : " );
-
-            });
-
-
-            if (portBox.SelectedItem.ToString() == "" || addressBox.SelectedItem.ToString() == (string) "")
+            if (GetComboSelectedText(portBox) == "" || GetComboSelectedText(addressBox) == "")
             {
 
                 var k = new Action(portError);
@@ -64,30 +58,18 @@ namespace IOT_SERVER
 
             int bufferLength;
 
-            if (!Int32.TryParse(bufferLengthBox.Text.Trim(), out bufferLength))
+            if (!Int32.TryParse(GetComboSelectedText(bufferLengthBox).Trim(), out bufferLength))
             {
 
                 bufferLength = NetworkingClient.B_SIZE_DEAFULT;
 
             }
 
-            NetworkingClient.ProtoType type;
+            NetworkingClient.ProtoType type;            
 
-            String text = "";
+            type = (GetComboSelectedText(protocolBox) == "TCP") ? NetworkingClient.ProtoType.TCP : NetworkingClient.ProtoType.UDP;
 
-            Action accessU = () => text = protocolBox.SelectedItem.ToString();
-
-            if (InvokeRequired)
-
-                Invoke(accessU);
-
-            else
-
-                accessU();
-
-            type = (text == "TCP") ? NetworkingClient.ProtoType.TCP : NetworkingClient.ProtoType.UDP;
-
-            myClient = new NetworkingClient(type, addressBox.Text.Trim(), Int32.Parse(portBox.Text.Trim()), bufferLength);
+            myClient = new NetworkingClient(type, GetComboSelectedText(addressBox).Trim(), Int32.Parse(GetComboSelectedText(portBox).Trim()), bufferLength);
 
             myEncoder = new Encoder(Encoder.DEFAULT_LENGTH_BUFFER, "ascii");
 
@@ -107,12 +89,6 @@ namespace IOT_SERVER
 
             if (myClient.isConnected()) pnl.BackColor = Color.Green;
 
-            //this.Invoke((MethodInvoker)delegate
-            //{
-
-            //    textBox.AppendText("\nSuccessfully connected to: " + myClient.Ip().ToString());
-
-            //});
 
             while (!backgroundWorker1.CancellationPending)
             {
@@ -144,6 +120,23 @@ namespace IOT_SERVER
 
         }
 
+
+        private string GetComboSelectedText(System.Windows.Forms.ComboBox control) {
+
+
+            string newText = "";
+
+            this.Invoke((MethodInvoker)delegate
+            {
+
+                newText = control.SelectedItem.ToString();
+
+            });
+
+            return newText;
+
+        }
+
         private void bufferParsingError() {
 
             textBox.AppendText("\nCorrupted value entered in buffer length field. Using default value.");
@@ -164,18 +157,22 @@ namespace IOT_SERVER
 
             backgroundWorker2.CancelAsync();
 
-            pnl.BackColor = Color.Red;
-
             try
             {
+                Server.Close();
+
                 myClient.Disconnect();
+
             }
 
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
 
                 Console.WriteLine(ex.ToString());
 
-            }             
+            }
+
+            finally { pnl.BackColor = Color.Red; }
 
         }
 
@@ -303,7 +300,7 @@ namespace IOT_SERVER
 
             }
 
-            SimpleServer Server = new SimpleServer(portNumber);
+            Server = new SimpleServer(portNumber);
 
             String s = Server.Init();
 

@@ -139,6 +139,12 @@ public class SimpleServer
         return null;
 
     }
+
+    public void Close() {               
+
+        server.Close();        
+
+    }
     
    
 
