@@ -11,6 +11,8 @@ using System.Threading;
 public class SimpleServer
 {
 
+    IOT_SERVER.Encoder myEncoder = new IOT_SERVER.Encoder();
+
     private const int BUFFSIZE_DEFAULT = 32;
 
     private const int DEFAULT_PORT = 8080;
@@ -97,7 +99,7 @@ public class SimpleServer
 
         int bytesReceived;
 
-            i++;
+        i++;            
 
             try
             {
@@ -105,6 +107,8 @@ public class SimpleServer
                 Console.WriteLine("Trial {0}", i);
 
                 Client = server.Accept();
+
+                Client.ReceiveTimeout = 10000;
 
                 Console.WriteLine("Done Accepting");
 
@@ -114,13 +118,13 @@ public class SimpleServer
 
                if (bytesReceived > 0) {
 
-                Client.Send(recvBuffer, bytesReceived, SocketFlags.None);
+                    Client.Send(recvBuffer, bytesReceived, SocketFlags.None);
 
                 }
 
                 Console.WriteLine( "Got stuff!");
 
-                return "THING " + Client.RemoteEndPoint.ToString() + Encoding.ASCII.GetString(recvBuffer);
+                return "Connected to " + Client.RemoteEndPoint.ToString() + ". Received : " + Encoding.ASCII.GetString(recvBuffer);
                              
 
             }

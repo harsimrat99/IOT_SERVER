@@ -23,6 +23,9 @@ namespace IOT_SERVER
 
         private Encoding encoding;
 
+
+        //Encoding class
+
         public Encoder(int maxsz, String s) {
 
             MAX_LENGTH = maxsz;
@@ -54,6 +57,12 @@ namespace IOT_SERVER
             return encoded;
 
         }
+
+    }
+
+    public void CreateEncoding() {
+
+
 
     }
 }

@@ -29,15 +29,15 @@ namespace IOT_SERVER
 
         private int port;
 
-        private int bufferLength;
-
-        private int timeOut;
+        private int bufferLength;        
 
         public byte[] readBuffer;
 
         private byte[] recvPacket;
 
         protected private int bytesReceived;
+
+        private int timeOut = 0;
 
         public const int B_SIZE_DEAFULT = 200;
 
@@ -72,7 +72,7 @@ namespace IOT_SERVER
 
             Console.WriteLine(server);
 
-            host = Dns.GetHostEntry(server);
+            host = Dns.Resolve(server);
 
             for (int l = 0; l < host.AddressList.Length; l++) {
 
@@ -86,15 +86,13 @@ namespace IOT_SERVER
 
             bufferLength = buffSize;
 
-            recvPacket = new byte[100];
+            recvPacket = new byte[bufferLength];
 
             switch (_type) {
 
                 case ProtoType.TCP:
 
-                    socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
-                    socket.NoDelay = true;
+                    socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);                    
 
                     break;
 
@@ -158,7 +156,7 @@ namespace IOT_SERVER
 
                 Console.WriteLine("Connection Error: {0}", se.ErrorCode.ToString());
 
-                throw new SocketException(se.ErrorCode);
+                return -1;
 
 
             }

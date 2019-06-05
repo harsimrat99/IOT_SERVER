@@ -69,6 +69,8 @@ namespace IOT_SERVER
 
             type = (GetComboSelectedText(protocolBox) == "TCP") ? NetworkingClient.ProtoType.TCP : NetworkingClient.ProtoType.UDP;
 
+            //AppendText(type.ToString());
+
             myClient = new NetworkingClient(type, GetComboSelectedText(addressBox).Trim(), Int32.Parse(GetComboSelectedText(portBox).Trim()), bufferLength);
 
             myEncoder = new Encoder(Encoder.DEFAULT_LENGTH_BUFFER, "ascii");
@@ -76,7 +78,7 @@ namespace IOT_SERVER
             try
             {
 
-                myClient.Connect();
+                if (myClient.Connect() > 0) AppendText("Connected succesfully to " + myClient.Ip());
 
             }
 
@@ -84,6 +86,8 @@ namespace IOT_SERVER
             {
 
                 Console.WriteLine(es.Message);
+
+                AppendText("Connection Error\n");
 
             }
 
@@ -114,7 +118,7 @@ namespace IOT_SERVER
 
                 }
 
-                Thread.Sleep(100);
+                Thread.Sleep(10);
 
             }
 
@@ -305,9 +309,7 @@ namespace IOT_SERVER
 
             AppendText(s);
 
-            for (; running == true ; ) {
-
-                Thread.Sleep(50);
+            for (; running == true ; ) {                
 
                 s =(Server.GetMessage());
 
