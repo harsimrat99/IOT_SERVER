@@ -44,16 +44,17 @@ namespace IOT_SERVER
             this.msgBox = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.button3 = new System.Windows.Forms.Button();
-            this.comPortBox = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
-            this.baudrateBox = new System.Windows.Forms.TextBox();
             this.button4 = new System.Windows.Forms.Button();
             this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
             this.button5 = new System.Windows.Forms.Button();
             this.portBox = new System.Windows.Forms.ComboBox();
             this.addressBox = new System.Windows.Forms.ComboBox();
             this.bufferLengthBox = new System.Windows.Forms.ComboBox();
+            this.comPortBox = new System.Windows.Forms.ComboBox();
+            this.baudRateBox = new System.Windows.Forms.ComboBox();
+            this.autoScroll = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // textBox
@@ -79,7 +80,7 @@ namespace IOT_SERVER
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(483, 355);
+            this.button2.Location = new System.Drawing.Point(351, 355);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(110, 47);
             this.button2.TabIndex = 7;
@@ -192,14 +193,6 @@ namespace IOT_SERVER
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.Button3_Click);
             // 
-            // comPortBox
-            // 
-            this.comPortBox.Enabled = false;
-            this.comPortBox.Location = new System.Drawing.Point(602, 192);
-            this.comPortBox.Name = "comPortBox";
-            this.comPortBox.Size = new System.Drawing.Size(158, 20);
-            this.comPortBox.TabIndex = 4;
-            // 
             // label5
             // 
             this.label5.AutoSize = true;
@@ -218,14 +211,6 @@ namespace IOT_SERVER
             this.label6.Size = new System.Drawing.Size(69, 13);
             this.label6.TabIndex = 20;
             this.label6.Text = "BAUD RATE";
-            // 
-            // baudrateBox
-            // 
-            this.baudrateBox.Enabled = false;
-            this.baudrateBox.Location = new System.Drawing.Point(602, 231);
-            this.baudrateBox.Name = "baudrateBox";
-            this.baudrateBox.Size = new System.Drawing.Size(158, 20);
-            this.baudrateBox.TabIndex = 5;
             // 
             // button4
             // 
@@ -300,20 +285,50 @@ namespace IOT_SERVER
             this.bufferLengthBox.TabIndex = 25;
             this.bufferLengthBox.SelectedIndexChanged += new System.EventHandler(this.BufferLengthBox_SelectedIndexChanged);
             // 
+            // comPortBox
+            // 
+            this.comPortBox.FormattingEnabled = true;
+            this.comPortBox.Location = new System.Drawing.Point(602, 192);
+            this.comPortBox.Name = "comPortBox";
+            this.comPortBox.Size = new System.Drawing.Size(158, 21);
+            this.comPortBox.TabIndex = 26;
+            // 
+            // baudRateBox
+            // 
+            this.baudRateBox.FormattingEnabled = true;
+            this.baudRateBox.Location = new System.Drawing.Point(602, 233);
+            this.baudRateBox.Name = "baudRateBox";
+            this.baudRateBox.Size = new System.Drawing.Size(158, 21);
+            this.baudRateBox.TabIndex = 27;
+            // 
+            // autoScroll
+            // 
+            this.autoScroll.AutoSize = true;
+            this.autoScroll.Checked = true;
+            this.autoScroll.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.autoScroll.Location = new System.Drawing.Point(488, 359);
+            this.autoScroll.Name = "autoScroll";
+            this.autoScroll.Size = new System.Drawing.Size(72, 17);
+            this.autoScroll.TabIndex = 28;
+            this.autoScroll.Text = "Autoscroll";
+            this.autoScroll.UseVisualStyleBackColor = true;
+            this.autoScroll.CheckedChanged += new System.EventHandler(this.AutoScroll_CheckedChanged);
+            // 
             // IOT
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(772, 411);
+            this.Controls.Add(this.autoScroll);
+            this.Controls.Add(this.baudRateBox);
+            this.Controls.Add(this.comPortBox);
             this.Controls.Add(this.bufferLengthBox);
             this.Controls.Add(this.addressBox);
             this.Controls.Add(this.portBox);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.label6);
-            this.Controls.Add(this.baudrateBox);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.comPortBox);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.msgBox);
@@ -355,16 +370,17 @@ namespace IOT_SERVER
         private System.Windows.Forms.TextBox msgBox;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.TextBox comPortBox;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.TextBox baudrateBox;
         private System.Windows.Forms.Button button4;
         private System.ComponentModel.BackgroundWorker backgroundWorker2;
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.ComboBox portBox;
         private System.Windows.Forms.ComboBox addressBox;
         private System.Windows.Forms.ComboBox bufferLengthBox;
+        private System.Windows.Forms.ComboBox comPortBox;
+        private System.Windows.Forms.ComboBox baudRateBox;
+        private System.Windows.Forms.CheckBox autoScroll;
     }
 }
 

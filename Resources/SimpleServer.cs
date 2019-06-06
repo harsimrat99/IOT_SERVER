@@ -11,7 +11,7 @@ using System.Threading;
 public class SimpleServer
 {
 
-    IOT_SERVER.Encoder myEncoder = new IOT_SERVER.Encoder();
+    //IOT_SERVER.Encoder myEncoder = new IOT_SERVER.Encoder();
 
     private const int BUFFSIZE_DEFAULT = 32;
 
@@ -69,7 +69,9 @@ public class SimpleServer
 
             server.ReceiveTimeout = DEFAULT_TIMEOUT_RECEIVE;
 
-            server.Listen(100);
+            server.Listen(1);
+
+           
 
         }
 
@@ -93,56 +95,65 @@ public class SimpleServer
 
         return "SUCCESFULL INITIALISED AT PORT " + Port.ToString();
 
+
+    }
+
+    public IPEndPoint StartAccepting() {
+
+        Client = server.Accept();
+
+        Client.ReceiveTimeout = 100;
+
+        Console.WriteLine("Trial {0}", i);        
+
+        Console.WriteLine("Done Accepting");
+
+        Console.WriteLine("Handling Client at {0}.", (IPEndPoint)(Client.RemoteEndPoint));
+
+        return (IPEndPoint) Client.RemoteEndPoint;
+
     }
 
     public String GetMessage() {
 
-        int bytesReceived;
+        int bytesReceived = 0;
 
         i++;            
 
             try
             {
 
-                Console.WriteLine("Trial {0}", i);
+            bytesReceived = Client.Receive(recvBuffer, recvBuffer.Length, SocketFlags.None);
 
-                Client = server.Accept();
+            if (bytesReceived > 0)
+            {
 
-                Client.ReceiveTimeout = 10000;
+                Client.Send(recvBuffer, bytesReceived, SocketFlags.None);
 
-                Console.WriteLine("Done Accepting");
-
-                Console.WriteLine("Handling Client at {0}.", (IPEndPoint) (Client.RemoteEndPoint));
-                 
-                bytesReceived = Client.Receive(recvBuffer, recvBuffer.Length, SocketFlags.None);
-
-               if (bytesReceived > 0) {
-
-                    Client.Send(recvBuffer, bytesReceived, SocketFlags.None);
-
-                }
-
-                Console.WriteLine( "Got stuff!");
+                Console.WriteLine("Got stuff!");
 
                 return "Connected to " + Client.RemoteEndPoint.ToString() + ". Received : " + Encoding.ASCII.GetString(recvBuffer);
-                             
+            }
+
+            else return null;
 
             }
 
-            catch (Exception se)
+            catch (SocketException)
             {
-
-                Console.WriteLine(se.Message);
-
+                
                 if (Client == null) {
 
                     Console.WriteLine("Error Eroor!!");
 
-                    return "PROBLEM: " + se.Message;
+                    return "PROBLEM: ";
 
                 }                              
 
-            }        
+            }      
+        
+            
+
 
         return null;
 

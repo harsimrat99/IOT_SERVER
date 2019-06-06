@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.VisualBasic;
+using System.Net;
 
 namespace IOT_SERVER
 {
@@ -22,6 +23,8 @@ namespace IOT_SERVER
 
         SimpleServer Server;
 
+        SimpleSerial Serial;
+
         Encoder myEncoder;
 
         object myLock = new object();
@@ -33,6 +36,18 @@ namespace IOT_SERVER
             InitializeComponent();
 
             myEncoder = new Encoder(bfrLen, "ascii");
+
+            comPortBox.Items.AddRange( SimpleSerial.GetPorts() );
+
+            comPortBox.SelectedItem = 0;
+
+            baudRateBox.Items.AddRange(new object[] { 4800,9600, 14400, 19200, 38400, 57600, 115200, 128000, 256000 });
+
+            baudRateBox.SelectedItem = 1 ;
+
+            button4.Enabled = false;
+
+
         }
 
         private void Button1_Click(object sender, EventArgs e)
@@ -74,6 +89,21 @@ namespace IOT_SERVER
             myClient = new NetworkingClient(type, GetComboSelectedText(addressBox).Trim(), Int32.Parse(GetComboSelectedText(portBox).Trim()), bufferLength);
 
             myEncoder = new Encoder(Encoder.DEFAULT_LENGTH_BUFFER, "ascii");
+
+            Serial = new SimpleSerial(GetComboSelectedText(comPortBox), Int32.Parse(GetComboSelectedText(baudRateBox)), true);
+
+            Serial.DataReady += delegate
+            {
+
+                String data = Serial.ReadString();
+
+                myClient.Write(myEncoder.Encode(Encoding.ASCII.GetBytes(data)));
+
+                textBox.AppendText(data);
+
+                if (autoScroll.Checked) textBox.ScrollToCaret();
+
+            };
 
             try
             {
@@ -163,6 +193,8 @@ namespace IOT_SERVER
 
             try
             {
+                Serial.Close();
+
                 Server.Close();
 
                 myClient.Disconnect();
@@ -295,9 +327,9 @@ namespace IOT_SERVER
         private void BackgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
         {
 
-            int portNumber = 0;            
 
-            if (!Int32.TryParse(GetComboSelectedText(portBox).Trim(), out portNumber)) {
+            if (!Int32.TryParse(GetComboSelectedText(portBox).Trim(), out int portNumber))
+            {
 
                 portNumber = SimpleServer.DEFAULT_SERVER_PORT;
 
@@ -307,17 +339,35 @@ namespace IOT_SERVER
 
             String s = Server.Init();
 
-            AppendText(s);
+            AppendText(Server.StartAccepting().ToString());
 
-            for (; running == true ; ) {                
+            for (; running == true;)
+            {
+                try
+                {
+                    s = (Server.GetMessage());
+                }
 
-                s =(Server.GetMessage());
-
-                if (s != null) {
-
-                    AppendText(s);
+                catch (Exception)
+                {
 
                 }
+
+                if (s != null)
+                {
+
+                    AppendText(s.ToString());
+
+                    if (autoScroll.Checked) {
+                        this.Invoke((MethodInvoker)delegate {
+
+                            textBox.ScrollToCaret();
+
+                        });
+                }
+            }
+
+                Thread.Sleep(75);
 
             }
 
@@ -388,6 +438,12 @@ namespace IOT_SERVER
 
         private void BackgroundWorker3_DoWork(object sender, DoWorkEventArgs e)
         {
+
+        }
+
+        private void AutoScroll_CheckedChanged(object sender, EventArgs e)
+        {
+            button4.Enabled = !button4.Enabled;            
 
         }
     }

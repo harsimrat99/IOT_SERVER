@@ -60,9 +60,4 @@ namespace IOT_SERVER
 
     }
 
-    public void CreateEncoding() {
-
-
-
-    }
 }
