@@ -204,7 +204,7 @@ namespace IOT_SERVER
 
             try { return IPAddress.Parse(((IPEndPoint)socket.RemoteEndPoint).Address.ToString()); }
 
-            catch (Exception e) {
+            catch (Exception) {
 
                 return null;
             }
