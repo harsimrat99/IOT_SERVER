@@ -65,22 +65,22 @@ namespace IOT_SERVER
             this.textBox.ReadOnly = true;
             this.textBox.Size = new System.Drawing.Size(581, 331);
             this.textBox.TabIndex = 9;
-            this.textBox.Text = "";            
+            this.textBox.Text = "";
             // 
-            // button1
+            // StartClientButton
             // 
             this.StartClientButton.Location = new System.Drawing.Point(12, 377);
-            this.StartClientButton.Name = "button1";
+            this.StartClientButton.Name = "StartClientButton";
             this.StartClientButton.Size = new System.Drawing.Size(109, 22);
             this.StartClientButton.TabIndex = 6;
             this.StartClientButton.Text = "Start Client";
             this.StartClientButton.UseVisualStyleBackColor = true;
             this.StartClientButton.Click += new System.EventHandler(this.StartClientProcessEvent);
             // 
-            // button2
+            // StopButton
             // 
             this.StopButton.Location = new System.Drawing.Point(351, 355);
-            this.StopButton.Name = "button2";
+            this.StopButton.Name = "StopButton";
             this.StopButton.Size = new System.Drawing.Size(110, 47);
             this.StopButton.TabIndex = 7;
             this.StopButton.Text = "Stop";
@@ -192,7 +192,7 @@ namespace IOT_SERVER
             this.label5.Size = new System.Drawing.Size(64, 13);
             this.label5.TabIndex = 18;
             this.label5.Text = "COM PORT";
- // 
+            // 
             // label6
             // 
             this.label6.AutoSize = true;
@@ -225,7 +225,7 @@ namespace IOT_SERVER
             this.StartServerButton.TabIndex = 22;
             this.StartServerButton.Text = "Start Server";
             this.StartServerButton.UseVisualStyleBackColor = true;
-            this.StartServerButton.Click += new System.EventHandler(this.Button5_Click);
+            this.StartServerButton.Click += new System.EventHandler(this.ServerButtonStartEvent);
             // 
             // portBox
             // 
@@ -337,7 +337,7 @@ namespace IOT_SERVER
             this.MinimumSize = new System.Drawing.Size(500, 450);
             this.Name = "IOT";
             this.Text = "IOT";
-            this.TransparencyKey = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));           
+            this.TransparencyKey = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
             this.ResumeLayout(false);
             this.PerformLayout();
 

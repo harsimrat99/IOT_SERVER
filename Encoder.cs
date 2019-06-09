@@ -7,19 +7,18 @@ using System.Threading.Tasks;
 namespace IOT_SERVER
 {
     public class Encoder
-    {
-        private static int mAX_LENGTH = DEFAULT_LENGTH_BUFFER;
+    {        
 
         private const String ASCII = "ascii";
 
         private const String UTF_7 = "utf7";
 
         private byte delimmiter { get; set; }
-        public  int MAX_LENGTH { get => mAX_LENGTH; set => mAX_LENGTH = value; }
+        public  int MAX_LENGTH {  get; private set ; }
 
         public const short DEFAULT_LENGTH_BUFFER = 50;
 
-        public const byte DEFAULT_DELIM = (byte) 36;
+        public const byte DEFAULT_DELIM = (byte) 36; //"$"
 
         private Encoding encoding;
 

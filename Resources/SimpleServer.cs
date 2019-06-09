@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+
 using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Net;
 using System.Threading;
-
+using IOT_SERVER;
 
 public class SimpleServer
 {
@@ -30,14 +30,12 @@ public class SimpleServer
     private Socket server = null;
         
     private Socket Client = null;
-
+    
     private int i = 0;
 
     public const int DEFAULT_SERVER_PORT = 80;
 
-    public const int DEFAULT_TIMEOUT_RECEIVE = 1000;
-
-    private IOT_SERVER.Encoder Encoder;
+    public const int DEFAULT_TIMEOUT_RECEIVE = 1000;    
 
     public  SimpleServer(int port, int listeners)
 	{
@@ -45,9 +43,7 @@ public class SimpleServer
         Listeners = listeners;
 
         Port = port;
-
-        this.Encoder = new IOT_SERVER.Encoder(50, "ascii");
-
+        
     }
 
 
@@ -73,9 +69,7 @@ public class SimpleServer
 
             server.ReceiveTimeout = DEFAULT_TIMEOUT_RECEIVE;
 
-            server.Listen(1);
-
-           
+            server.Listen(1);            
 
         }
 
@@ -131,12 +125,7 @@ public class SimpleServer
 
             if (bytesReceived > 0)
             {
-
-                Client.Send(recvBuffer, bytesReceived, SocketFlags.None);
-
-                Console.WriteLine("Got stuff!");
-
-                return  Client.RemoteEndPoint.ToString() + ". Received : " + Encoding.ASCII.GetString(recvBuffer);
+                return  Client.RemoteEndPoint.ToString() + ". Received : " + System.Text.Encoding.ASCII.GetString(recvBuffer);
             }
 
             else return null;
@@ -163,22 +152,22 @@ public class SimpleServer
 
     }
 
-    public int SendMessage(string mesg) {
+    public int SendMessage(byte[] buff) {
 
 
-        if (Client == null) return -1;
+        if (Client == null) return -1;        
 
         try {
-
-            byte[] buff = this.Encoder.Encode(Encoding.ASCII.GetBytes(mesg));
 
             Client.Send(buff, buff.Length, SocketFlags.None);
 
         }
 
-        catch (Exception) {
+        catch (Exception e) {            
 
-            Console.WriteLine("Could not send Message!");
+            Console.WriteLine(e.Message);
+
+            Environment.Exit(0);
         }
 
 

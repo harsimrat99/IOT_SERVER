@@ -40,17 +40,25 @@ namespace IOT_SERVER
 
             myEncoder = new Encoder(bfrLen, "ascii");
 
-            comPortBox.Items.AddRange( SimpleSerial.GetPorts() );
-
-            comPortBox.SelectedItem = 0;
+            comPortBox.Items.AddRange( SimpleSerial.GetPorts() );            
 
             baudRateBox.Items.AddRange(new object[] { 4800,9600, 14400, 19200, 38400, 57600, 115200, 128000, 256000 });
 
-            baudRateBox.SelectedItem = 1 ;
+            baudRateBox.SelectedIndex = 0 ;
+
+            portBox.SelectedIndex = 0;
+
+            addressBox.SelectedIndex = 1;
+
+            comPortBox.SelectedIndex = 0;
+
+            protocolBox.SelectedIndex = 0;
+
+            bufferLengthBox.SelectedIndex = 0;
 
             button4.Enabled = false;
 
-
+            State = MODE.NONE;
         }
 
         private void StartClientProcessEvent(object sender, EventArgs e)
@@ -204,7 +212,7 @@ namespace IOT_SERVER
 
                     ClientWorker.CancelAsync();
 
-                    try { myClient.Disconnect(); }
+                    try { myClient.Disconnect(); Serial.Close(); }
 
                     catch (Exception) { }
 
@@ -216,7 +224,7 @@ namespace IOT_SERVER
 
                     ServerWorker.CancelAsync();
 
-                    try { Server.Close(); }
+                    try { Server.Close();  }
 
                     catch (Exception) { }
 
@@ -225,22 +233,10 @@ namespace IOT_SERVER
                     break;
 
             }
-                                      
 
-            try
-            {
-                Serial.Close();
+            State = MODE.NONE;
 
-            }
-
-            catch (Exception ex)
-            {
-
-                Console.WriteLine(ex.ToString());
-
-            }
-
-            finally { pnl.BackColor = Color.Red; }
+            pnl.BackColor = Color.Red; 
 
         }
 
@@ -256,7 +252,7 @@ namespace IOT_SERVER
 
             if (msgBox.Text.Trim() == "") {
 
-                ShowErrorMessage("Please enter a auery in the field.");
+                ShowErrorMessage("Please enter a query in the field.");
 
                 return;
 
@@ -282,7 +278,7 @@ namespace IOT_SERVER
 
                 case MODE.SERVER:
 
-                    Server.SendMessage(message);
+                    Server.SendMessage(myEncoder.Encode(Encoding.ASCII.GetBytes(message)));                    
 
                     break;
             }
@@ -344,7 +340,7 @@ namespace IOT_SERVER
 
         }
 
-        private void Button5_Click(object sender, EventArgs e)
+        private void ServerButtonStartEvent(object sender, EventArgs e)
         {
 
             if (this.State == MODE.CLIENT || this.State == MODE.SERVER)

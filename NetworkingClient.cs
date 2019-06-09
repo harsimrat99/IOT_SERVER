@@ -72,7 +72,7 @@ namespace IOT_SERVER
 
             Console.WriteLine(server);
 
-            host = Dns.GetHostEntry(server);
+            host = Dns.Resolve(server);
 
             for (int l = 0; l < host.AddressList.Length; l++) {
 
@@ -198,9 +198,7 @@ namespace IOT_SERVER
 
         }
 
-        public IPAddress Ip() {
-
-            //Console.WriteLine(IPAddress.Parse(((IPEndPoint)socket.RemoteEndPoint).Address.ToString()));
+        public IPAddress Ip() {           
 
             try { return IPAddress.Parse(((IPEndPoint)socket.RemoteEndPoint).Address.ToString()); }
 
