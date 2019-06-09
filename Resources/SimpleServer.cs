@@ -37,12 +37,16 @@ public class SimpleServer
 
     public const int DEFAULT_TIMEOUT_RECEIVE = 1000;
 
+    private IOT_SERVER.Encoder Encoder;
+
     public  SimpleServer(int port, int listeners)
 	{
 
         Listeners = listeners;
 
         Port = port;
+
+        this.Encoder = new IOT_SERVER.Encoder(50, "ascii");
 
     }
 
@@ -132,7 +136,7 @@ public class SimpleServer
 
                 Console.WriteLine("Got stuff!");
 
-                return "Connected to " + Client.RemoteEndPoint.ToString() + ". Received : " + Encoding.ASCII.GetString(recvBuffer);
+                return  Client.RemoteEndPoint.ToString() + ". Received : " + Encoding.ASCII.GetString(recvBuffer);
             }
 
             else return null;
@@ -159,7 +163,32 @@ public class SimpleServer
 
     }
 
-    public void Close() {               
+    public int SendMessage(string mesg) {
+
+
+        if (Client == null) return -1;
+
+        try {
+
+            byte[] buff = this.Encoder.Encode(Encoding.ASCII.GetBytes(mesg));
+
+            Client.Send(buff, buff.Length, SocketFlags.None);
+
+        }
+
+        catch (Exception) {
+
+            Console.WriteLine("Could not send Message!");
+        }
+
+
+        return 1;
+
+    }
+
+    public void Close() {
+
+        if (Client != null) Client.Close();
 
         server.Close();        
 

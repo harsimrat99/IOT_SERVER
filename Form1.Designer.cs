@@ -31,9 +31,9 @@ namespace IOT_SERVER
         private void InitializeComponent()
         {
             this.textBox = new System.Windows.Forms.RichTextBox();
-            this.button1 = new System.Windows.Forms.Button();
-            this.button2 = new System.Windows.Forms.Button();
-            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.StartClientButton = new System.Windows.Forms.Button();
+            this.StopButton = new System.Windows.Forms.Button();
+            this.ClientWorker = new System.ComponentModel.BackgroundWorker();
             this.lblPort = new System.Windows.Forms.Label();
             this.Clear = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
@@ -43,12 +43,12 @@ namespace IOT_SERVER
             this.label3 = new System.Windows.Forms.Label();
             this.msgBox = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.button3 = new System.Windows.Forms.Button();
+            this.SendButton = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.button4 = new System.Windows.Forms.Button();
-            this.backgroundWorker2 = new System.ComponentModel.BackgroundWorker();
-            this.button5 = new System.Windows.Forms.Button();
+            this.ServerWorker = new System.ComponentModel.BackgroundWorker();
+            this.StartServerButton = new System.Windows.Forms.Button();
             this.portBox = new System.Windows.Forms.ComboBox();
             this.addressBox = new System.Windows.Forms.ComboBox();
             this.bufferLengthBox = new System.Windows.Forms.ComboBox();
@@ -65,36 +65,33 @@ namespace IOT_SERVER
             this.textBox.ReadOnly = true;
             this.textBox.Size = new System.Drawing.Size(581, 331);
             this.textBox.TabIndex = 9;
-            this.textBox.Text = "";
-            this.textBox.TextChanged += new System.EventHandler(this.TextBox_TextChanged);
+            this.textBox.Text = "";            
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(12, 377);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(109, 22);
-            this.button1.TabIndex = 6;
-            this.button1.Text = "Start Client";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.Button1_Click);
+            this.StartClientButton.Location = new System.Drawing.Point(12, 377);
+            this.StartClientButton.Name = "button1";
+            this.StartClientButton.Size = new System.Drawing.Size(109, 22);
+            this.StartClientButton.TabIndex = 6;
+            this.StartClientButton.Text = "Start Client";
+            this.StartClientButton.UseVisualStyleBackColor = true;
+            this.StartClientButton.Click += new System.EventHandler(this.StartClientProcessEvent);
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(351, 355);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(110, 47);
-            this.button2.TabIndex = 7;
-            this.button2.Text = "Stop";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.Button2_Click);
+            this.StopButton.Location = new System.Drawing.Point(351, 355);
+            this.StopButton.Name = "button2";
+            this.StopButton.Size = new System.Drawing.Size(110, 47);
+            this.StopButton.TabIndex = 7;
+            this.StopButton.Text = "Stop";
+            this.StopButton.UseVisualStyleBackColor = true;
+            this.StopButton.Click += new System.EventHandler(this.StopButtonEvent);
             // 
-            // backgroundWorker1
+            // ClientWorker
             // 
-            this.backgroundWorker1.WorkerReportsProgress = true;
-            this.backgroundWorker1.WorkerSupportsCancellation = true;
-            this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker1_DoWork);
-            this.backgroundWorker1.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BackgroundWorker1_ProgressChanged);
-            this.backgroundWorker1.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BackgroundWorker1_RunWorkerCompleted);
+            this.ClientWorker.WorkerReportsProgress = true;
+            this.ClientWorker.WorkerSupportsCancellation = true;
+            this.ClientWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.ClientWorkerEvent);
             // 
             // lblPort
             // 
@@ -104,7 +101,6 @@ namespace IOT_SERVER
             this.lblPort.Size = new System.Drawing.Size(37, 13);
             this.lblPort.TabIndex = 2;
             this.lblPort.Text = "PORT";
-            this.lblPort.Click += new System.EventHandler(this.Label1_Click);
             // 
             // Clear
             // 
@@ -124,7 +120,6 @@ namespace IOT_SERVER
             this.label1.Size = new System.Drawing.Size(59, 13);
             this.label1.TabIndex = 8;
             this.label1.Text = "ADDRESS";
-            this.label1.Click += new System.EventHandler(this.Label1_Click_1);
             // 
             // pnl
             // 
@@ -142,7 +137,6 @@ namespace IOT_SERVER
             this.label2.Size = new System.Drawing.Size(144, 13);
             this.label2.TabIndex = 11;
             this.label2.Text = "STREAM BUFFER LENGTH";
-            this.label2.Click += new System.EventHandler(this.Label2_Click);
             // 
             // protocolBox
             // 
@@ -154,7 +148,6 @@ namespace IOT_SERVER
             this.protocolBox.Name = "protocolBox";
             this.protocolBox.Size = new System.Drawing.Size(158, 21);
             this.protocolBox.TabIndex = 3;
-            this.protocolBox.SelectedIndexChanged += new System.EventHandler(this.ComboBox1_SelectedIndexChanged);
             // 
             // label3
             // 
@@ -164,7 +157,6 @@ namespace IOT_SERVER
             this.label3.Size = new System.Drawing.Size(66, 13);
             this.label3.TabIndex = 13;
             this.label3.Text = "PROTOCOL";
-            this.label3.Click += new System.EventHandler(this.Label3_Click);
             // 
             // msgBox
             // 
@@ -181,17 +173,16 @@ namespace IOT_SERVER
             this.label4.Size = new System.Drawing.Size(45, 13);
             this.label4.TabIndex = 15;
             this.label4.Text = "QUERY";
-            this.label4.Click += new System.EventHandler(this.Label4_Click);
             // 
-            // button3
+            // SendButton
             // 
-            this.button3.Location = new System.Drawing.Point(602, 306);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(158, 37);
-            this.button3.TabIndex = 8;
-            this.button3.Text = "SEND";
-            this.button3.UseVisualStyleBackColor = true;
-            this.button3.Click += new System.EventHandler(this.Button3_Click);
+            this.SendButton.Location = new System.Drawing.Point(602, 306);
+            this.SendButton.Name = "SendButton";
+            this.SendButton.Size = new System.Drawing.Size(158, 37);
+            this.SendButton.TabIndex = 8;
+            this.SendButton.Text = "SEND";
+            this.SendButton.UseVisualStyleBackColor = true;
+            this.SendButton.Click += new System.EventHandler(this.SendButtonEvent);
             // 
             // label5
             // 
@@ -201,8 +192,7 @@ namespace IOT_SERVER
             this.label5.Size = new System.Drawing.Size(64, 13);
             this.label5.TabIndex = 18;
             this.label5.Text = "COM PORT";
-            this.label5.Click += new System.EventHandler(this.Label5_Click);
-            // 
+ // 
             // label6
             // 
             this.label6.AutoSize = true;
@@ -220,22 +210,22 @@ namespace IOT_SERVER
             this.button4.TabIndex = 21;
             this.button4.Text = "Scroll to Bottom";
             this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.Button4_Click);
+            this.button4.Click += new System.EventHandler(this.ScrollToCursorButton);
             // 
-            // backgroundWorker2
+            // ServerWorker
             // 
-            this.backgroundWorker2.WorkerSupportsCancellation = true;
-            this.backgroundWorker2.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker2_DoWork);
+            this.ServerWorker.WorkerSupportsCancellation = true;
+            this.ServerWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.ServerWorkerEvent);
             // 
-            // button5
+            // StartServerButton
             // 
-            this.button5.Location = new System.Drawing.Point(12, 355);
-            this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(109, 22);
-            this.button5.TabIndex = 22;
-            this.button5.Text = "Start Server";
-            this.button5.UseVisualStyleBackColor = true;
-            this.button5.Click += new System.EventHandler(this.Button5_Click);
+            this.StartServerButton.Location = new System.Drawing.Point(12, 355);
+            this.StartServerButton.Name = "StartServerButton";
+            this.StartServerButton.Size = new System.Drawing.Size(109, 22);
+            this.StartServerButton.TabIndex = 22;
+            this.StartServerButton.Text = "Start Server";
+            this.StartServerButton.UseVisualStyleBackColor = true;
+            this.StartServerButton.Click += new System.EventHandler(this.Button5_Click);
             // 
             // portBox
             // 
@@ -325,11 +315,11 @@ namespace IOT_SERVER
             this.Controls.Add(this.bufferLengthBox);
             this.Controls.Add(this.addressBox);
             this.Controls.Add(this.portBox);
-            this.Controls.Add(this.button5);
+            this.Controls.Add(this.StartServerButton);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.button3);
+            this.Controls.Add(this.SendButton);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.msgBox);
             this.Controls.Add(this.label3);
@@ -339,16 +329,15 @@ namespace IOT_SERVER
             this.Controls.Add(this.label1);
             this.Controls.Add(this.Clear);
             this.Controls.Add(this.lblPort);
-            this.Controls.Add(this.button2);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.StopButton);
+            this.Controls.Add(this.StartClientButton);
             this.Controls.Add(this.textBox);
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(800, 800);
             this.MinimumSize = new System.Drawing.Size(500, 450);
             this.Name = "IOT";
             this.Text = "IOT";
-            this.TransparencyKey = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            this.Load += new System.EventHandler(this.IOT_Load);
+            this.TransparencyKey = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));           
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -357,9 +346,9 @@ namespace IOT_SERVER
         #endregion
 
         private System.Windows.Forms.RichTextBox textBox;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.Button button2;
-        private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.Windows.Forms.Button StartClientButton;
+        private System.Windows.Forms.Button StopButton;
+        private System.ComponentModel.BackgroundWorker ClientWorker;
         private System.Windows.Forms.Label lblPort;
         private System.Windows.Forms.Button Clear;
         private System.Windows.Forms.Label label1;
@@ -369,12 +358,12 @@ namespace IOT_SERVER
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TextBox msgBox;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button SendButton;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button button4;
-        private System.ComponentModel.BackgroundWorker backgroundWorker2;
-        private System.Windows.Forms.Button button5;
+        private System.ComponentModel.BackgroundWorker ServerWorker;
+        private System.Windows.Forms.Button StartServerButton;
         private System.Windows.Forms.ComboBox portBox;
         private System.Windows.Forms.ComboBox addressBox;
         private System.Windows.Forms.ComboBox bufferLengthBox;

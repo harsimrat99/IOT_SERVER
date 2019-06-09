@@ -30,6 +30,9 @@ namespace IOT_SERVER
         object myLock = new object();
 
         Boolean running = true;
+        public enum MODE {SERVER, CLIENT, NONE};
+
+        private MODE State;
 
         public IOT()
         {
@@ -50,21 +53,35 @@ namespace IOT_SERVER
 
         }
 
-        private void Button1_Click(object sender, EventArgs e)
+        private void StartClientProcessEvent(object sender, EventArgs e)
         {
-            running = true;
 
-            backgroundWorker1.RunWorkerAsync();           
+            if (this.State == MODE.CLIENT || this.State == MODE.SERVER)
+            {
+
+                ShowErrorMessage("Cannot start event. Application is in " + this.State.ToString() + " mode.");
+
+            }
+
+            else {
+
+                running = true;
+
+                this.State = MODE.CLIENT;
+
+                ClientWorker.RunWorkerAsync();
+
+            }
 
         }
 
-        private void BackgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        private void ClientWorkerEvent(object sender, DoWorkEventArgs e)
         {
 
             if (GetComboSelectedText(portBox) == "" || GetComboSelectedText(addressBox) == "")
             {
 
-                var k = new Action(portError);
+                var k = new Action(PortError);
 
                 this.Invoke(k);
 
@@ -117,14 +134,14 @@ namespace IOT_SERVER
 
                 Console.WriteLine(es.Message);
 
-                AppendText("Connection Error\n");
+                ShowErrorMessage("Connection Error\n");
 
             }
 
             if (myClient.isConnected()) pnl.BackColor = Color.Green;
 
 
-            while (!backgroundWorker1.CancellationPending)
+            while (!ClientWorker.CancellationPending)
             {
 
                 lock (myLock)
@@ -139,12 +156,7 @@ namespace IOT_SERVER
                 if (btsRecv > 0)
                 {
 
-                    this.Invoke((MethodInvoker)delegate
-                    {
-
-                        textBox.AppendText("\nMessage from: " + myClient.Ip().ToString() + " " + Encoding.ASCII.GetString(myClient.readBuffer));
-
-                    });
+                    AppendText("\nMessage from: " + myClient.Ip().ToString() + " " + Encoding.ASCII.GetString(myClient.readBuffer));                   
 
                 }
 
@@ -153,7 +165,6 @@ namespace IOT_SERVER
             }
 
         }
-
 
         private string GetComboSelectedText(System.Windows.Forms.ComboBox control) {
 
@@ -171,33 +182,54 @@ namespace IOT_SERVER
 
         }
 
-        private void bufferParsingError() {
+        private void BufferParsingError() {
 
             textBox.AppendText("\nCorrupted value entered in buffer length field. Using default value.");
 
         }
 
-        private void portError() {
+        private void PortError() {
 
             textBox.AppendText("\nPlease enter values in all the required fields.");
 
         }
 
-        private void Button2_Click(object sender, EventArgs e)
+        private void StopButtonEvent(object sender, EventArgs e)
         {
             running = false;
 
-            backgroundWorker1.CancelAsync();
+            switch (State) {
 
-            backgroundWorker2.CancelAsync();
+                case MODE.CLIENT:
+
+                    ClientWorker.CancelAsync();
+
+                    try { myClient.Disconnect(); }
+
+                    catch (Exception) { }
+
+                    finally { State = MODE.NONE; }
+
+                    break;
+
+                case MODE.SERVER:
+
+                    ServerWorker.CancelAsync();
+
+                    try { Server.Close(); }
+
+                    catch (Exception) { }
+
+                    finally { State = MODE.NONE; }
+
+                    break;
+
+            }
+                                      
 
             try
             {
                 Serial.Close();
-
-                Server.Close();
-
-                myClient.Disconnect();
 
             }
 
@@ -212,74 +244,19 @@ namespace IOT_SERVER
 
         }
 
-        private void PictureBox1_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void BackgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-
-        }
-
-        private void BackgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-
-        }
-
-        private void Label1_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void Clear_Click(object sender, EventArgs e)
         {
             textBox.Clear();
         }
 
-        private void Label1_Click_1(object sender, EventArgs e)
-        {
-
-        }
-
-        private void TextBox1_TextChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void IOT_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void Label3_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        private void ComboBox1_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void Label4_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        //Send button
-        private void Button3_Click(object sender, EventArgs e)
+        private void SendButtonEvent(object sender, EventArgs e)
         {
 
             String message = "";
 
             if (msgBox.Text.Trim() == "") {
 
-                this.Invoke((MethodInvoker)delegate {
-
-                    textBox.AppendText("\nPlease enter a query in the query field.");
-
-                });
+                ShowErrorMessage("Please enter a auery in the field.");
 
                 return;
 
@@ -293,38 +270,32 @@ namespace IOT_SERVER
 
                 });
 
-            }            
+            }
 
-            myClient.Write(myEncoder.Encode(Encoding.ASCII.GetBytes(message)));                        
+            switch (State) {
 
-        }
+                case MODE.CLIENT:
 
-        private void Label5_Click(object sender, EventArgs e)
-        {
+                    myClient.Write(myEncoder.Encode(Encoding.ASCII.GetBytes(message)));
 
-        }
+                    break;
 
-        private void Label2_Click(object sender, EventArgs e)
-        {
+                case MODE.SERVER:
 
-        }
+                    Server.SendMessage(message);
 
-        private void TextBox_TextChanged(object sender, EventArgs e)
-        {
+                    break;
+            }
 
-        }
-
-        private void CheckBox1_CheckedChanged(object sender, EventArgs e)
-        {
 
         }
-
-        private void Button4_Click(object sender, EventArgs e)
+ 
+        private void ScrollToCursorButton(object sender, EventArgs e)
         {
             textBox.ScrollToCaret();
         }
 
-        private void BackgroundWorker2_DoWork(object sender, DoWorkEventArgs e)
+        private void ServerWorkerEvent(object sender, DoWorkEventArgs e)
         {
 
 
@@ -376,16 +347,24 @@ namespace IOT_SERVER
         private void Button5_Click(object sender, EventArgs e)
         {
 
-            backgroundWorker2.RunWorkerAsync();
+            if (this.State == MODE.CLIENT || this.State == MODE.SERVER)
+            {
 
-            running = true;
+                ShowErrorMessage("Cannot start event. Application is in " + this.State.ToString() + " mode."); 
 
-            pnl.BackColor = Color.Green;
+            }
 
-        }
+            else {                
 
-        private void Label7_Click(object sender, EventArgs e)
-        {
+                this.State = MODE.SERVER;
+
+                running = true;
+
+                ServerWorker.RunWorkerAsync();
+
+                pnl.BackColor = Color.Green;
+
+            }
 
         }
 
@@ -436,15 +415,17 @@ namespace IOT_SERVER
             AddToCombo(bufferLengthBox);
         }
 
-        private void BackgroundWorker3_DoWork(object sender, DoWorkEventArgs e)
-        {
-
-        }
-
         private void AutoScroll_CheckedChanged(object sender, EventArgs e)
         {
             button4.Enabled = !button4.Enabled;            
 
         }
+
+        private void ShowErrorMessage(string msg) {
+
+            MessageBox.Show(msg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+        }
+
     }
 }

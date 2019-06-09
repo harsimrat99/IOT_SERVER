@@ -72,7 +72,7 @@ namespace IOT_SERVER
 
             Console.WriteLine(server);
 
-            host = Dns.Resolve(server);
+            host = Dns.GetHostEntry(server);
 
             for (int l = 0; l < host.AddressList.Length; l++) {
 
