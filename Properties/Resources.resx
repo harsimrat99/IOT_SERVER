@@ -121,4 +121,10 @@
   <data name="58afdad6829958a978a4a693[1]" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\58afdad6829958a978a4a693[1].png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="clients[1]" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\clients[1]1.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="back" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\back.ico;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

@@ -34,9 +34,11 @@ namespace IOT_SERVER
 
         private MODE State;
 
+        private Form2 ClientListForm = new Form2();
+
         public IOT()
         {
-            InitializeComponent();
+            InitializeComponent();            
 
             myEncoder = new Encoder(bfrLen, "ascii");
 
@@ -333,7 +335,8 @@ namespace IOT_SERVER
                             textBox.ScrollToCaret();
 
                         });
-                        
+
+                        s = null;
                 }
             }                
 
@@ -424,5 +427,12 @@ namespace IOT_SERVER
 
         }
 
+        private void ClientListStrip_Click(object sender, EventArgs e)
+        {
+
+            ClientListForm.Show();
+           
+
+        }
     }
 }

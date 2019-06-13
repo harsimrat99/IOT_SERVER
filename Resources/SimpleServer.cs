@@ -135,9 +135,7 @@ public class SimpleServer
             if (((Socket)ClientList[j]).Available > 0) { 
 
                 try
-                {
-                    Console.WriteLine("available > 0");
-
+                {                    
                     recvBuffer = new byte[DEFAULT_BUFFER_SIZE];
 
                     bytesReceived = ((Socket)ClientList[j]).Receive(recvBuffer, recvBuffer.Length, SocketFlags.None);
@@ -151,14 +149,12 @@ public class SimpleServer
 
                 }
 
-                catch (SocketException se)
+                catch (SocketException)
                 {
 
                     if ((Socket)ClientList[j] == null)
                     {
-
-                        Console.WriteLine("Error Eroor!!");
-
+                        
                         return "PROBLEM: ";
 
                     }
@@ -205,7 +201,11 @@ public class SimpleServer
         server.Close();        
 
     }
-    
-   
+
+    public ref ArrayList GetClients()
+    {
+        return  ref  ClientList;
+    }
 
 }
+
