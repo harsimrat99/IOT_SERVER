@@ -15,9 +15,7 @@ using System.Net;
 namespace IOT_SERVER
 {
     public partial class IOT : Form
-    {
-
-        public int bfrLen = Encoder.DEFAULT_LENGTH_BUFFER;
+    {        
 
         NetworkingClient myClient;
 
@@ -31,6 +29,8 @@ namespace IOT_SERVER
 
         Boolean running = true;
         public enum MODE {SERVER, CLIENT, NONE};
+
+        public int bfrLen = Encoder.DEFAULT_LENGTH_BUFFER;
 
         private MODE State;
 
@@ -146,7 +146,7 @@ namespace IOT_SERVER
 
             }
 
-            if (myClient.isConnected()) pnl.BackColor = Color.Green;
+            if (myClient.IsConnected()) pnl.BackColor = Color.Green;
 
 
             while (!ClientWorker.CancellationPending)
@@ -306,24 +306,26 @@ namespace IOT_SERVER
 
             String s = Server.Init();
 
-            AppendText(Server.StartAccepting().ToString());
+            AppendText(s);
+
+            s = null;
 
             for (; running == true;)
             {
-                try
-                {
-                    s = (Server.GetMessage());
-                }
+                Server.Accept();
 
-                catch (Exception)
-                {
+                if (s != null) {
+
+                    AppendText("Client obtained at: " + s);                        
 
                 }
 
+                s = (Server.GetMessage());
+          
                 if (s != null)
                 {
 
-                    AppendText(s.ToString());
+                    AppendText(s);
 
                     if (autoScroll.Checked) {
                         this.Invoke((MethodInvoker)delegate {
@@ -331,10 +333,9 @@ namespace IOT_SERVER
                             textBox.ScrollToCaret();
 
                         });
+                        
                 }
-            }
-
-                Thread.Sleep(75);
+            }                
 
             }
 

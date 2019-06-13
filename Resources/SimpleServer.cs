@@ -1,46 +1,48 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 
 using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Net;
-using System.Threading;
-using IOT_SERVER;
+
 
 public class SimpleServer
 {
 
     //IOT_SERVER.Encoder myEncoder = new IOT_SERVER.Encoder();
 
-    private const int BUFFSIZE_DEFAULT = 32;
-
-    private const int DEFAULT_PORT = 8080;
+    public const int DEFAULT_SERVER_PORT = 8080;        
 
     private const int DEFAULT_LISTENERS = 5;
 
-    private const int DEAFULT_BUFF_SIZE = 100;
+    private const int DEFAULT_BUFFER_SIZE = 100;    
+
+    private const int DEFAULT_TIMEOUT_RECEIVE = 1000;
+
+    //5 milli seconds
+    private const int DEFAULT_POLL_MICROS = 50000;
+
+    private byte[] recvBuffer;
 
     private int Port { get; set; }
 
     private int Listeners { get; set; }
 
-    protected byte[] recvBuffer;
+    private int i = 0;
 
     private Socket server = null;
         
     private Socket Client = null;
-    
-    private int i = 0;
 
-    public const int DEFAULT_SERVER_PORT = 80;
-
-    public const int DEFAULT_TIMEOUT_RECEIVE = 1000;    
+    private ArrayList ClientList;
 
     public  SimpleServer(int port, int listeners)
 	{
 
         Listeners = listeners;
+
+        ClientList = new ArrayList(Listeners);
 
         Port = port;
         
@@ -52,6 +54,8 @@ public class SimpleServer
         Port = port;
 
         Listeners = DEFAULT_LISTENERS;
+
+        ClientList = new ArrayList(Listeners);
 
     }
 
@@ -69,7 +73,7 @@ public class SimpleServer
 
             server.ReceiveTimeout = DEFAULT_TIMEOUT_RECEIVE;
 
-            server.Listen(1);            
+            server.Listen(Listeners);            
 
         }
 
@@ -89,26 +93,35 @@ public class SimpleServer
 
         }
 
-        recvBuffer = new byte[DEAFULT_BUFF_SIZE];
+        recvBuffer = new byte[DEFAULT_BUFFER_SIZE];
 
         return "SUCCESFULL INITIALISED AT PORT " + Port.ToString();
 
 
     }
 
-    public IPEndPoint StartAccepting() {
+    public IPEndPoint Accept() {
 
-        Client = server.Accept();
+        if (server.Poll(DEFAULT_POLL_MICROS, SelectMode.SelectRead))
+        {
 
-        Client.ReceiveTimeout = 100;
+            var index = ClientList.Add(server.Accept());
 
-        Console.WriteLine("Trial {0}", i);        
+            ((Socket)ClientList[index]).ReceiveTimeout = DEFAULT_TIMEOUT_RECEIVE;            
 
-        Console.WriteLine("Done Accepting");
+            Console.WriteLine("Trial {0}", ++this.i);
 
-        Console.WriteLine("Handling Client at {0}.", (IPEndPoint)(Client.RemoteEndPoint));
+            Console.WriteLine("Done Accepting");
 
-        return (IPEndPoint) Client.RemoteEndPoint;
+            Console.WriteLine("Handling Client at {0}.", ((Socket)ClientList[index]).RemoteEndPoint);
+
+            return (IPEndPoint)((Socket)ClientList[index]).RemoteEndPoint;
+
+        }
+
+        //Console.WriteLine("No acceptance." + ClientList.Count.ToString());
+
+        return null;
 
     }
 
@@ -116,37 +129,47 @@ public class SimpleServer
 
         int bytesReceived = 0;
 
-        i++;            
-
-            try
-            {
-
-            bytesReceived = Client.Receive(recvBuffer, recvBuffer.Length, SocketFlags.None);
-
-            if (bytesReceived > 0)
-            {
-                return  Client.RemoteEndPoint.ToString() + ". Received : " + System.Text.Encoding.ASCII.GetString(recvBuffer);
-            }
-
-            else return null;
-
-            }
-
-            catch (SocketException)
-            {
-                
-                if (Client == null) {
-
-                    Console.WriteLine("Error Eroor!!");
-
-                    return "PROBLEM: ";
-
-                }                              
-
-            }      
-        
+        for (int j = 0; j < ClientList.Count; j++)
+        {
             
+            if (((Socket)ClientList[j]).Available > 0) { 
 
+                try
+                {
+                    Console.WriteLine("available > 0");
+
+                    recvBuffer = new byte[DEFAULT_BUFFER_SIZE];
+
+                    bytesReceived = ((Socket)ClientList[j]).Receive(recvBuffer, recvBuffer.Length, SocketFlags.None);
+
+                    if (bytesReceived > 0)
+                    {
+                        return ((Socket)ClientList[j]).RemoteEndPoint.ToString() + " : " + System.Text.Encoding.ASCII.GetString(recvBuffer);
+                    }
+
+                    else return null;
+
+                }
+
+                catch (SocketException se)
+                {
+
+                    if ((Socket)ClientList[j] == null)
+                    {
+
+                        Console.WriteLine("Error Eroor!!");
+
+                        return "PROBLEM: ";
+
+                    }
+
+                }
+
+            }
+
+            Console.WriteLine("available nothing for this one ");
+
+        }
 
         return null;
 
@@ -155,11 +178,11 @@ public class SimpleServer
     public int SendMessage(byte[] buff) {
 
 
-        if (Client == null) return -1;        
+        //if (Client == null) return -1;        
 
         try {
 
-            Client.Send(buff, buff.Length, SocketFlags.None);
+            ((Socket)ClientList[ClientList.Count-1]).Send(buff, buff.Length, SocketFlags.None);
 
         }
 

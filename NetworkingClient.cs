@@ -118,7 +118,7 @@ namespace IOT_SERVER
 
         }
 
-        public bool isConnected() {
+        public bool IsConnected() {
 
             return socket.Connected;
 
