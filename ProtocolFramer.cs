@@ -9,7 +9,7 @@ namespace IOT_SERVER
     class ProtocolFramer
     {
        
-        public static byte[] WrapMessage(byte[] message) {
+        public static byte[] WrapMessage() {
 
             return null;
 

@@ -25,7 +25,7 @@ namespace IOT_SERVER
 
         Encoder myEncoder;
 
-        object myLock = new object();
+        object  myLock = new object();
 
         Boolean running = true;
         public enum MODE {SERVER, CLIENT, NONE};
@@ -38,7 +38,7 @@ namespace IOT_SERVER
         {
             InitializeComponent();
 
-            Clients.Hide();
+            ClientsTab.Hide();
 
             myEncoder = new Encoder(bfrLen, "ascii");
 
@@ -59,8 +59,6 @@ namespace IOT_SERVER
             bufferLengthBox.SelectedIndex = 0;
 
             button4.Enabled = false;
-
-
 
             State = MODE.NONE;
         }
@@ -190,12 +188,6 @@ namespace IOT_SERVER
             });
 
             return newText;
-
-        }
-
-        private void BufferParsingError() {
-
-            textBox.AppendText("\nCorrupted value entered in buffer length field. Using default value.");
 
         }
 
@@ -469,6 +461,13 @@ namespace IOT_SERVER
 
             }
 
+        }
+
+        private void TabControl_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (this.State == MODE.CLIENT && this.TabControl.SelectedTab == ClientsTab) {
+                (this.TabControl).SelectedTab = ClientsTab;
+            }
         }
     }
 }

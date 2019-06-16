@@ -120,12 +120,25 @@ public class SimpleSerial
 
             ReadBuffer = new Byte[Serial.BytesToRead];
 
-            Serial.Read(ReadBuffer, 0, Serial.BytesToRead);
+            Serial.Read(ReadBuffer, 0, Serial.BytesToRead);            
 
             return ReadBuffer;
         }
 
         else return ReadBuffer;
+    }
+
+    public void WriteLine(string data) {
+
+        Serial.WriteLine(data);
+    }
+
+    public void Write(string data) {
+        Serial.Write(data);
+    }
+
+    public void WriteBytes(byte[] data) {
+        Serial.Write(data, 0, data.Length);
     }
 
     public void Close() {

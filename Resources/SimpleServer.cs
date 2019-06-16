@@ -1,41 +1,14 @@
 ﻿using System;
 using System.Collections;
-using System.Linq;
-
-using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Net;
+using IOT_SERVER;
 
-
-public class SimpleServer
-{
-
-    //IOT_SERVER.Encoder myEncoder = new IOT_SERVER.Encoder();
-
-    public const int DEFAULT_SERVER_PORT = 8080;        
-
-    private const int DEFAULT_LISTENERS = 5;
-
-    private const int DEFAULT_BUFFER_SIZE = 100;    
-
-    private const int DEFAULT_TIMEOUT_RECEIVE = 1000;
-
-    //5 milli seconds
-    private const int DEFAULT_POLL_MICROS = 50000;
-
-    private byte[] recvBuffer;
-
-    private int Port { get; set; }
-
-    private int Listeners { get; set; }    
-
-    private Socket server = null;       
-
+public class SimpleServer : NetworkingServer
+{     
     private Hashtable  ClientList;
 
-    private int i = 0;
-
-    public event EventHandler <AcceptEventArgs> AcceptEvent;
+    private int i = 0;   
 
     public  SimpleServer(int port, int listeners)
 	{
@@ -48,7 +21,6 @@ public class SimpleServer
         
     }
 
-
     public  SimpleServer(int port) {
 
         Port = port;
@@ -59,7 +31,8 @@ public class SimpleServer
 
     }
 
-     public string Init() {
+    public override string Init()
+    {
         
 
         try
@@ -67,13 +40,13 @@ public class SimpleServer
 
             Console.WriteLine("Trying to Listen on port {0}.", Port);
 
-            server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            Server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-            server.Bind(new IPEndPoint(IPAddress.Any, Port));
+            Server.Bind(new IPEndPoint(IPAddress.Any, Port));
 
-            server.ReceiveTimeout = DEFAULT_TIMEOUT_RECEIVE;
+            Server.ReceiveTimeout = DEFAULT_TIMEOUT_RECEIVE;
 
-            server.Listen(Listeners);    
+            Server.Listen(Listeners);    
                        
 
         }
@@ -101,93 +74,30 @@ public class SimpleServer
 
     }
 
-    public void Accept() {
+    public override void Accept() {
 
-        if (server.Poll(DEFAULT_POLL_MICROS, SelectMode.SelectRead))
+        if (Server.Poll(DEFAULT_POLL_MICROS, SelectMode.SelectRead))
         {
             ++i;
 
-            ClientList.Add(i, server.Accept());
+            ClientList.Add(i, Server.Accept());
 
             ((Socket)ClientList[i]).ReceiveTimeout = DEFAULT_TIMEOUT_RECEIVE;
 
-            AcceptEventArgs ae = new AcceptEventArgs();
+            AcceptEventArgs ae = new AcceptEventArgs
+            {
+                endp = ((Socket)ClientList[i]).RemoteEndPoint,
 
-            ae.endp = ((Socket)ClientList[i]).RemoteEndPoint;
+                Name = i.ToString()
+            };
 
-            ae.Name = i.ToString();
-            
-            AcceptEvent.Invoke(this, ae);
+            base.OnAcceptEvent(ae);
             
         }
         
     }
 
-    public String GetMessage() {
-
-        int bytesReceived = 0;
-
-        foreach (Socket Client in ClientList)
-        {
-            
-            if (((Socket)Client).Available > 0) { 
-
-                try
-                {                    
-                    recvBuffer = new byte[DEFAULT_BUFFER_SIZE];
-
-                    bytesReceived = ((Socket)Client).Receive(recvBuffer, recvBuffer.Length, SocketFlags.None);
-
-                    if (bytesReceived > 0)
-                    {
-                        return ((Socket)Client).RemoteEndPoint.ToString() + " : " + System.Text.Encoding.ASCII.GetString(recvBuffer);
-                    }
-
-                    else return null;
-
-                }
-
-                catch (SocketException)
-                {
-
-                    if (((Socket)Client) == null)
-                    {
-                        
-                        return "PROBLEM";
-
-                    }
-
-                }
-
-            }            
-
-        }
-
-        return null;
-
-    }
-
-    public int SendMessage(int key, byte[] buff) {
-      
-
-        try {
-
-            ((Socket)ClientList[key]).Send(buff, buff.Length, SocketFlags.None);
-
-        }
-
-        catch (Exception e) {            
-
-            Console.WriteLine(e.Message);
-
-        }
-
-
-        return 1;
-
-    }
-
-    public void Close() {
+    public override void Close() {
 
         foreach (object gg in ClientList)
 
@@ -201,18 +111,77 @@ public class SimpleServer
 
             }
 
-        server.Close();        
+        Server.Close();        
 
     }
 
+    public String GetMessage()
+    {
 
-    public class AcceptEventArgs : EventArgs {
+        foreach (DictionaryEntry Client in ClientList)
+        {
 
-        public EndPoint endp;
+            if (((Socket)Client.Value).Available > 0)
+            {
 
-        public string Name;
+                try
+                {
+                    recvBuffer = new byte[DEFAULT_BUFFER_SIZE];
+
+                    int bytesReceived = ((Socket)Client.Value).Receive(recvBuffer, recvBuffer.Length, SocketFlags.None);
+
+                    if (bytesReceived > 0)
+                    {
+                        return ((Socket)Client.Value).RemoteEndPoint.ToString() + " : " + System.Text.Encoding.ASCII.GetString(recvBuffer);
+                    }
+
+                    else return null;
+
+                }
+
+                catch (Exception)
+                {                    
+
+                    if (((Socket)Client.Value) == null)
+                    {
+
+                        return "PROBLEM";
+
+                    }
+
+                }
+
+            }
+
+        }
+
+        return null;
 
     }
+
+    public int SendMessage(int key, byte[] buff)
+    {
+
+
+        try
+        {
+
+            ((Socket)ClientList[key]).Send(buff, buff.Length, SocketFlags.None);
+
+        }
+
+        catch (Exception e)
+        {
+
+            Console.WriteLine(e.Message);
+
+        }
+
+
+        return 1;
+
+    }
+
 
 }
 

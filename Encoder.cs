@@ -13,7 +13,7 @@ namespace IOT_SERVER
 
         private const String UTF_7 = "utf7";
 
-        private byte delimmiter { get; set; }
+        private byte Delimmiter { get; set; }
         public  int MAX_LENGTH {  get; private set ; }
 
         public const short DEFAULT_LENGTH_BUFFER = 50;
@@ -22,14 +22,13 @@ namespace IOT_SERVER
 
         private Encoding encoding;
 
-
         //Encoding class
 
         public Encoder(int maxsz, String s) {
 
             MAX_LENGTH = maxsz;
 
-            delimmiter = DEFAULT_DELIM;
+            Delimmiter = DEFAULT_DELIM;
 
             if (s == ASCII) encoding = Encoding.ASCII;
 
@@ -49,12 +48,17 @@ namespace IOT_SERVER
 
             message.CopyTo(encoded, 0);
 
-            encoded[message.Length] = delimmiter;
+            encoded[message.Length] = Delimmiter;
 
             data.CopyTo(encoded, message.Length + 1);                        
 
             return encoded;
 
+        }
+
+        public void SetDelimmiter(byte delim) {
+
+            this.Delimmiter = delim;
         }
 
     }

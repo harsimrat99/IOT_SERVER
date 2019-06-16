@@ -31,6 +31,7 @@ namespace IOT_SERVER
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(IOT));
             this.textBox = new System.Windows.Forms.RichTextBox();
             this.StartClientButton = new System.Windows.Forms.Button();
             this.StopButton = new System.Windows.Forms.Button();
@@ -58,7 +59,7 @@ namespace IOT_SERVER
             this.autoScroll = new System.Windows.Forms.CheckBox();
             this.TabControl = new System.Windows.Forms.TabControl();
             this.logPage = new System.Windows.Forms.TabPage();
-            this.Clients = new System.Windows.Forms.TabPage();
+            this.ClientsTab = new System.Windows.Forms.TabPage();
             this.ClientsTabTextbox = new System.Windows.Forms.TextBox();
             this.ClientsTabSendButton = new System.Windows.Forms.Button();
             this.ClientList = new System.Windows.Forms.ListView();
@@ -69,7 +70,7 @@ namespace IOT_SERVER
             this.timeConn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.TabControl.SuspendLayout();
             this.logPage.SuspendLayout();
-            this.Clients.SuspendLayout();
+            this.ClientsTab.SuspendLayout();
             this.SuspendLayout();
             // 
             // textBox
@@ -322,12 +323,13 @@ namespace IOT_SERVER
             // TabControl
             // 
             this.TabControl.Controls.Add(this.logPage);
-            this.TabControl.Controls.Add(this.Clients);
+            this.TabControl.Controls.Add(this.ClientsTab);
             this.TabControl.Location = new System.Drawing.Point(12, 5);
             this.TabControl.Name = "TabControl";
             this.TabControl.SelectedIndex = 0;
             this.TabControl.Size = new System.Drawing.Size(583, 359);
             this.TabControl.TabIndex = 30;
+            this.TabControl.SelectedIndexChanged += new System.EventHandler(this.TabControl_SelectedIndexChanged);
             // 
             // logPage
             // 
@@ -342,16 +344,16 @@ namespace IOT_SERVER
             // 
             // Clients
             // 
-            this.Clients.Controls.Add(this.ClientsTabTextbox);
-            this.Clients.Controls.Add(this.ClientsTabSendButton);
-            this.Clients.Controls.Add(this.ClientList);
-            this.Clients.Location = new System.Drawing.Point(4, 22);
-            this.Clients.Name = "Clients";
-            this.Clients.Padding = new System.Windows.Forms.Padding(3);
-            this.Clients.Size = new System.Drawing.Size(575, 333);
-            this.Clients.TabIndex = 1;
-            this.Clients.Text = "Clients";
-            this.Clients.UseVisualStyleBackColor = true;
+            this.ClientsTab.Controls.Add(this.ClientsTabTextbox);
+            this.ClientsTab.Controls.Add(this.ClientsTabSendButton);
+            this.ClientsTab.Controls.Add(this.ClientList);
+            this.ClientsTab.Location = new System.Drawing.Point(4, 22);
+            this.ClientsTab.Name = "Clients";
+            this.ClientsTab.Padding = new System.Windows.Forms.Padding(3);
+            this.ClientsTab.Size = new System.Drawing.Size(575, 333);
+            this.ClientsTab.TabIndex = 1;
+            this.ClientsTab.Text = "Clients";
+            this.ClientsTab.UseVisualStyleBackColor = true;
             // 
             // ClientsTabTextbox
             // 
@@ -441,6 +443,7 @@ namespace IOT_SERVER
             this.Controls.Add(this.lblPort);
             this.Controls.Add(this.StopButton);
             this.Controls.Add(this.StartClientButton);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(800, 800);
             this.MinimumSize = new System.Drawing.Size(500, 450);
@@ -449,8 +452,8 @@ namespace IOT_SERVER
             this.TransparencyKey = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
             this.TabControl.ResumeLayout(false);
             this.logPage.ResumeLayout(false);
-            this.Clients.ResumeLayout(false);
-            this.Clients.PerformLayout();
+            this.ClientsTab.ResumeLayout(false);
+            this.ClientsTab.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -485,7 +488,7 @@ namespace IOT_SERVER
         private System.Windows.Forms.CheckBox autoScroll;
         private System.Windows.Forms.TabControl TabControl;
         private System.Windows.Forms.TabPage logPage;
-        private System.Windows.Forms.TabPage Clients;
+        private System.Windows.Forms.TabPage ClientsTab;
         private System.Windows.Forms.TextBox ClientsTabTextbox;
         private System.Windows.Forms.Button ClientsTabSendButton;
         private System.Windows.Forms.ListView ClientList;
