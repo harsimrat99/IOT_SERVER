@@ -29,11 +29,11 @@ public class SimpleServer
 
     private int Listeners { get; set; }    
 
-    private Socket server = null;
-        
-    private Socket Client = null;
+    private Socket server = null;       
 
-    private ArrayList ClientList;
+    private Hashtable  ClientList;
+
+    private int i = 0;
 
     public event EventHandler <AcceptEventArgs> AcceptEvent;
 
@@ -42,7 +42,7 @@ public class SimpleServer
 
         Listeners = listeners;
 
-        ClientList = new ArrayList(Listeners);
+        ClientList = new Hashtable(Listeners);
 
         Port = port;
         
@@ -55,7 +55,7 @@ public class SimpleServer
 
         Listeners = DEFAULT_LISTENERS;
 
-        ClientList = new ArrayList(Listeners);
+        ClientList = new Hashtable(Listeners);
 
     }
 
@@ -105,16 +105,17 @@ public class SimpleServer
 
         if (server.Poll(DEFAULT_POLL_MICROS, SelectMode.SelectRead))
         {
+            ++i;
 
-            var index = ClientList.Add(server.Accept());
+            ClientList.Add(i, server.Accept());
 
-            ((Socket)ClientList[index]).ReceiveTimeout = DEFAULT_TIMEOUT_RECEIVE;
+            ((Socket)ClientList[i]).ReceiveTimeout = DEFAULT_TIMEOUT_RECEIVE;
 
             AcceptEventArgs ae = new AcceptEventArgs();
 
-            ae.endp = ((Socket)ClientList[index]).RemoteEndPoint;
+            ae.endp = ((Socket)ClientList[i]).RemoteEndPoint;
 
-            ae.Name = index.ToString();
+            ae.Name = i.ToString();
             
             AcceptEvent.Invoke(this, ae);
             
@@ -126,20 +127,20 @@ public class SimpleServer
 
         int bytesReceived = 0;
 
-        for (int j = 0; j < ClientList.Count; j++)
+        foreach (Socket Client in ClientList)
         {
             
-            if (((Socket)ClientList[j]).Available > 0) { 
+            if (((Socket)Client).Available > 0) { 
 
                 try
                 {                    
                     recvBuffer = new byte[DEFAULT_BUFFER_SIZE];
 
-                    bytesReceived = ((Socket)ClientList[j]).Receive(recvBuffer, recvBuffer.Length, SocketFlags.None);
+                    bytesReceived = ((Socket)Client).Receive(recvBuffer, recvBuffer.Length, SocketFlags.None);
 
                     if (bytesReceived > 0)
                     {
-                        return ((Socket)ClientList[j]).RemoteEndPoint.ToString() + " : " + System.Text.Encoding.ASCII.GetString(recvBuffer);
+                        return ((Socket)Client).RemoteEndPoint.ToString() + " : " + System.Text.Encoding.ASCII.GetString(recvBuffer);
                     }
 
                     else return null;
@@ -149,10 +150,10 @@ public class SimpleServer
                 catch (SocketException)
                 {
 
-                    if ((Socket)ClientList[j] == null)
+                    if (((Socket)Client) == null)
                     {
                         
-                        return "PROBLEM: ";
+                        return "PROBLEM";
 
                     }
 
@@ -166,12 +167,12 @@ public class SimpleServer
 
     }
 
-    public int SendMessage(byte[] buff) {
+    public int SendMessage(int key, byte[] buff) {
       
 
         try {
 
-            ((Socket)ClientList[ClientList.Count-1]).Send(buff, buff.Length, SocketFlags.None);
+            ((Socket)ClientList[key]).Send(buff, buff.Length, SocketFlags.None);
 
         }
 
@@ -179,7 +180,6 @@ public class SimpleServer
 
             Console.WriteLine(e.Message);
 
-            Environment.Exit(0);
         }
 
 
@@ -189,16 +189,22 @@ public class SimpleServer
 
     public void Close() {
 
-        if (Client != null) Client.Close();
+        foreach (object gg in ClientList)
+
+            if (((Socket)gg) != null)
+
+            {
+
+                ((Socket)gg).Shutdown(SocketShutdown.Both);
+
+                ((Socket)gg).Close();
+
+            }
 
         server.Close();        
 
     }
 
-    public ref ArrayList GetClients()
-    {
-        return  ref  ClientList;
-    }
 
     public class AcceptEventArgs : EventArgs {
 

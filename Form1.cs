@@ -36,7 +36,9 @@ namespace IOT_SERVER
 
         public IOT()
         {
-            InitializeComponent();            
+            InitializeComponent();
+
+            Clients.Hide();
 
             myEncoder = new Encoder(bfrLen, "ascii");
 
@@ -280,7 +282,7 @@ namespace IOT_SERVER
 
                 case MODE.SERVER:
 
-                    Server.SendMessage(myEncoder.Encode(Encoding.ASCII.GetBytes(message)));                    
+                    //Server.SendMessage(myEncoder.Encode(Encoding.ASCII.GetBytes(message)));                    
 
                     break;
             }
@@ -381,9 +383,7 @@ namespace IOT_SERVER
 
                 this.State = MODE.SERVER;
 
-                running = true;
-
-                this.TabControl.Controls.Add(this.Clients);
+                running = true;                
 
                 ServerWorker.RunWorkerAsync();
 
@@ -458,5 +458,17 @@ namespace IOT_SERVER
 
         }
 
+        private  void ClientsTabSendButton_Click(object sender, EventArgs e)
+        {
+            
+            byte[] buff = myEncoder.Encode(Encoding.ASCII.GetBytes(this.ClientsTabTextbox.Text.Trim()));
+
+            for (int i = 0; i < ClientList.SelectedItems.Count; i++) {
+
+                Server.SendMessage(Int32.Parse(ClientList.SelectedItems[i].Text), buff);
+
+            }
+
+        }
     }
 }

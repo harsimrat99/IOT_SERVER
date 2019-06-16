@@ -321,7 +321,8 @@ namespace IOT_SERVER
             // 
             // TabControl
             // 
-            this.TabControl.Controls.Add(this.logPage);                      
+            this.TabControl.Controls.Add(this.logPage);
+            this.TabControl.Controls.Add(this.Clients);
             this.TabControl.Location = new System.Drawing.Point(12, 5);
             this.TabControl.Name = "TabControl";
             this.TabControl.SelectedIndex = 0;
@@ -367,6 +368,7 @@ namespace IOT_SERVER
             this.ClientsTabSendButton.TabIndex = 1;
             this.ClientsTabSendButton.Text = "Send";
             this.ClientsTabSendButton.UseVisualStyleBackColor = true;
+            this.ClientsTabSendButton.Click += new System.EventHandler(this.ClientsTabSendButton_Click);
             // 
             // ClientList
             // 
@@ -376,14 +378,15 @@ namespace IOT_SERVER
             this.Port,
             this.lastMessage,
             this.timeConn});
+            this.ClientList.FullRowSelect = true;
             this.ClientList.GridLines = true;
+            this.ClientList.HideSelection = false;
             this.ClientList.Location = new System.Drawing.Point(0, 0);
             this.ClientList.Name = "ClientList";
             this.ClientList.Size = new System.Drawing.Size(574, 295);
             this.ClientList.TabIndex = 0;
             this.ClientList.UseCompatibleStateImageBehavior = false;
-            this.ClientList.View = System.Windows.Forms.View.Details;           
-         
+            this.ClientList.View = System.Windows.Forms.View.Details;
             // 
             // Client
             // 
