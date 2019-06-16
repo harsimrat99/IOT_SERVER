@@ -32,9 +32,7 @@ namespace IOT_SERVER
 
         public int bfrLen = Encoder.DEFAULT_LENGTH_BUFFER;
 
-        private MODE State;
-
-        private Form2 ClientListForm = new Form2();
+        private MODE State;        
 
         public IOT()
         {
@@ -59,6 +57,8 @@ namespace IOT_SERVER
             bufferLengthBox.SelectedIndex = 0;
 
             button4.Enabled = false;
+
+
 
             State = MODE.NONE;
         }
@@ -98,9 +98,8 @@ namespace IOT_SERVER
                 return;
             }
 
-            int bufferLength;
 
-            if (!Int32.TryParse(GetComboSelectedText(bufferLengthBox).Trim(), out bufferLength))
+            if (!Int32.TryParse(GetComboSelectedText(bufferLengthBox).Trim(), out int bufferLength))
             {
 
                 bufferLength = NetworkingClient.B_SIZE_DEAFULT;
@@ -244,7 +243,8 @@ namespace IOT_SERVER
 
         private void Clear_Click(object sender, EventArgs e)
         {
-            textBox.Clear();
+            textBox.Clear();            
+
         }
 
         private void SendButtonEvent(object sender, EventArgs e)
@@ -306,6 +306,8 @@ namespace IOT_SERVER
 
             Server = new SimpleServer(portNumber);
 
+            Server.AcceptEvent += Server_AcceptEvent;
+
             String s = Server.Init();
 
             AppendText(s);
@@ -315,12 +317,6 @@ namespace IOT_SERVER
             for (; running == true;)
             {
                 Server.Accept();
-
-                if (s != null) {
-
-                    AppendText("Client obtained at: " + s);                        
-
-                }
 
                 s = (Server.GetMessage());
           
@@ -344,6 +340,33 @@ namespace IOT_SERVER
 
         }
 
+        private void Server_AcceptEvent(object sender, SimpleServer.AcceptEventArgs e)
+        {
+            Console.WriteLine("Event");
+
+            ListViewItem item = new ListViewItem();
+
+            item.Name = e.endp.ToString(); ;
+
+            item.Text = e.Name;
+
+            int index = item.Name.IndexOf(":");
+
+            item.SubItems.Add(item.Name.Substring(0, index));
+
+            item.SubItems.Add(item.Name.Substring(index + 1));
+
+            item.SubItems.Add(DateTime.Now.ToString());
+
+            try
+            {
+                AddToList(item);
+            }
+            catch (Exception ) {                
+            }
+
+        }
+
         private void ServerButtonStartEvent(object sender, EventArgs e)
         {
 
@@ -359,6 +382,8 @@ namespace IOT_SERVER
                 this.State = MODE.SERVER;
 
                 running = true;
+
+                this.TabControl.Controls.Add(this.Clients);
 
                 ServerWorker.RunWorkerAsync();
 
@@ -383,6 +408,12 @@ namespace IOT_SERVER
 
         }
 
+        private void AddToList(ListViewItem item) {
+
+            this.Invoke((MethodInvoker)delegate { ClientList.Items.Add(item); });
+
+        }
+
         private void AddressBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             AddToCombo(addressBox);
@@ -390,7 +421,7 @@ namespace IOT_SERVER
 
         private void AddToCombo(System.Windows.Forms.ComboBox box) {
 
-            String s = "";
+            String s;
 
             if (box.SelectedIndex == box.Items.Count - 1)
             {
@@ -427,12 +458,5 @@ namespace IOT_SERVER
 
         }
 
-        private void ClientListStrip_Click(object sender, EventArgs e)
-        {
-
-            ClientListForm.Show();
-           
-
-        }
     }
 }

@@ -27,15 +27,15 @@ public class SimpleServer
 
     private int Port { get; set; }
 
-    private int Listeners { get; set; }
-
-    private int i = 0;
+    private int Listeners { get; set; }    
 
     private Socket server = null;
         
     private Socket Client = null;
 
     private ArrayList ClientList;
+
+    public event EventHandler <AcceptEventArgs> AcceptEvent;
 
     public  SimpleServer(int port, int listeners)
 	{
@@ -73,7 +73,8 @@ public class SimpleServer
 
             server.ReceiveTimeout = DEFAULT_TIMEOUT_RECEIVE;
 
-            server.Listen(Listeners);            
+            server.Listen(Listeners);    
+                       
 
         }
 
@@ -100,29 +101,25 @@ public class SimpleServer
 
     }
 
-    public IPEndPoint Accept() {
+    public void Accept() {
 
         if (server.Poll(DEFAULT_POLL_MICROS, SelectMode.SelectRead))
         {
 
             var index = ClientList.Add(server.Accept());
 
-            ((Socket)ClientList[index]).ReceiveTimeout = DEFAULT_TIMEOUT_RECEIVE;            
+            ((Socket)ClientList[index]).ReceiveTimeout = DEFAULT_TIMEOUT_RECEIVE;
 
-            Console.WriteLine("Trial {0}", ++this.i);
+            AcceptEventArgs ae = new AcceptEventArgs();
 
-            Console.WriteLine("Done Accepting");
+            ae.endp = ((Socket)ClientList[index]).RemoteEndPoint;
 
-            Console.WriteLine("Handling Client at {0}.", ((Socket)ClientList[index]).RemoteEndPoint);
-
-            return (IPEndPoint)((Socket)ClientList[index]).RemoteEndPoint;
-
+            ae.Name = index.ToString();
+            
+            AcceptEvent.Invoke(this, ae);
+            
         }
-
-        //Console.WriteLine("No acceptance." + ClientList.Count.ToString());
-
-        return null;
-
+        
     }
 
     public String GetMessage() {
@@ -161,9 +158,7 @@ public class SimpleServer
 
                 }
 
-            }
-
-            Console.WriteLine("available nothing for this one ");
+            }            
 
         }
 
@@ -172,9 +167,7 @@ public class SimpleServer
     }
 
     public int SendMessage(byte[] buff) {
-
-
-        //if (Client == null) return -1;        
+      
 
         try {
 
@@ -205,6 +198,14 @@ public class SimpleServer
     public ref ArrayList GetClients()
     {
         return  ref  ClientList;
+    }
+
+    public class AcceptEventArgs : EventArgs {
+
+        public EndPoint endp;
+
+        public string Name;
+
     }
 
 }

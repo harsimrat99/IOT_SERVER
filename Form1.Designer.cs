@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using System.Windows.Forms;
 
 namespace IOT_SERVER
 {
@@ -55,19 +56,29 @@ namespace IOT_SERVER
             this.comPortBox = new System.Windows.Forms.ComboBox();
             this.baudRateBox = new System.Windows.Forms.ComboBox();
             this.autoScroll = new System.Windows.Forms.CheckBox();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-            this.ClientListStrip = new System.Windows.Forms.ToolStripButton();
-            this.toolStrip1.SuspendLayout();
+            this.TabControl = new System.Windows.Forms.TabControl();
+            this.logPage = new System.Windows.Forms.TabPage();
+            this.Clients = new System.Windows.Forms.TabPage();
+            this.ClientsTabTextbox = new System.Windows.Forms.TextBox();
+            this.ClientsTabSendButton = new System.Windows.Forms.Button();
+            this.ClientList = new System.Windows.Forms.ListView();
+            this.Client = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.Ip = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.Port = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lastMessage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.timeConn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.TabControl.SuspendLayout();
+            this.logPage.SuspendLayout();
+            this.Clients.SuspendLayout();
             this.SuspendLayout();
             // 
             // textBox
             // 
             this.textBox.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-            this.textBox.Location = new System.Drawing.Point(12, 31);
+            this.textBox.Location = new System.Drawing.Point(0, 0);
             this.textBox.Name = "textBox";
             this.textBox.ReadOnly = true;
-            this.textBox.Size = new System.Drawing.Size(581, 335);
+            this.textBox.Size = new System.Drawing.Size(575, 333);
             this.textBox.TabIndex = 9;
             this.textBox.Text = "";
             // 
@@ -300,7 +311,7 @@ namespace IOT_SERVER
             this.autoScroll.AutoSize = true;
             this.autoScroll.Checked = true;
             this.autoScroll.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.autoScroll.Location = new System.Drawing.Point(488, 376);
+            this.autoScroll.Location = new System.Drawing.Point(501, 376);
             this.autoScroll.Name = "autoScroll";
             this.autoScroll.Size = new System.Drawing.Size(72, 17);
             this.autoScroll.TabIndex = 28;
@@ -308,39 +319,103 @@ namespace IOT_SERVER
             this.autoScroll.UseVisualStyleBackColor = true;
             this.autoScroll.CheckedChanged += new System.EventHandler(this.AutoScroll_CheckedChanged);
             // 
-            // toolStrip1
+            // TabControl
             // 
-            this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ClientListStrip,
-            this.toolStripSeparator1});
-            this.toolStrip1.Location = new System.Drawing.Point(15, 5);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(72, 25);
-            this.toolStrip1.TabIndex = 29;
-            this.toolStrip1.Text = "toolStrip1";
+            this.TabControl.Controls.Add(this.logPage);                      
+            this.TabControl.Location = new System.Drawing.Point(12, 5);
+            this.TabControl.Name = "TabControl";
+            this.TabControl.SelectedIndex = 0;
+            this.TabControl.Size = new System.Drawing.Size(583, 359);
+            this.TabControl.TabIndex = 30;
             // 
-            // toolStripSeparator1
+            // logPage
             // 
-            this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
+            this.logPage.Controls.Add(this.textBox);
+            this.logPage.Location = new System.Drawing.Point(4, 22);
+            this.logPage.Name = "logPage";
+            this.logPage.Padding = new System.Windows.Forms.Padding(3);
+            this.logPage.Size = new System.Drawing.Size(575, 333);
+            this.logPage.TabIndex = 0;
+            this.logPage.Text = "Log";
+            this.logPage.UseVisualStyleBackColor = true;
             // 
-            // ClientListStrip
+            // Clients
             // 
-            this.ClientListStrip.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.ClientListStrip.Image = global::IOT_SERVER.Properties.Resources.clients_1_;
-            this.ClientListStrip.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.ClientListStrip.Name = "ClientListStrip";
-            this.ClientListStrip.Size = new System.Drawing.Size(23, 22);
-            this.ClientListStrip.Text = "toolStripButton1";
-            this.ClientListStrip.Click += new System.EventHandler(this.ClientListStrip_Click);
+            this.Clients.Controls.Add(this.ClientsTabTextbox);
+            this.Clients.Controls.Add(this.ClientsTabSendButton);
+            this.Clients.Controls.Add(this.ClientList);
+            this.Clients.Location = new System.Drawing.Point(4, 22);
+            this.Clients.Name = "Clients";
+            this.Clients.Padding = new System.Windows.Forms.Padding(3);
+            this.Clients.Size = new System.Drawing.Size(575, 333);
+            this.Clients.TabIndex = 1;
+            this.Clients.Text = "Clients";
+            this.Clients.UseVisualStyleBackColor = true;
+            // 
+            // ClientsTabTextbox
+            // 
+            this.ClientsTabTextbox.Location = new System.Drawing.Point(108, 303);
+            this.ClientsTabTextbox.Name = "ClientsTabTextbox";
+            this.ClientsTabTextbox.Size = new System.Drawing.Size(455, 20);
+            this.ClientsTabTextbox.TabIndex = 2;
+            // 
+            // ClientsTabSendButton
+            // 
+            this.ClientsTabSendButton.Location = new System.Drawing.Point(6, 301);
+            this.ClientsTabSendButton.Name = "ClientsTabSendButton";
+            this.ClientsTabSendButton.Size = new System.Drawing.Size(93, 23);
+            this.ClientsTabSendButton.TabIndex = 1;
+            this.ClientsTabSendButton.Text = "Send";
+            this.ClientsTabSendButton.UseVisualStyleBackColor = true;
+            // 
+            // ClientList
+            // 
+            this.ClientList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.Client,
+            this.Ip,
+            this.Port,
+            this.lastMessage,
+            this.timeConn});
+            this.ClientList.GridLines = true;
+            this.ClientList.Location = new System.Drawing.Point(0, 0);
+            this.ClientList.Name = "ClientList";
+            this.ClientList.Size = new System.Drawing.Size(574, 295);
+            this.ClientList.TabIndex = 0;
+            this.ClientList.UseCompatibleStateImageBehavior = false;
+            this.ClientList.View = System.Windows.Forms.View.Details;           
+         
+            // 
+            // Client
+            // 
+            this.Client.Text = "Client";
+            this.Client.Width = 99;
+            // 
+            // Ip
+            // 
+            this.Ip.Text = "IP Address";
+            this.Ip.Width = 92;
+            // 
+            // Port
+            // 
+            this.Port.Text = "Port";
+            this.Port.Width = 58;
+            // 
+            // lastMessage
+            // 
+            this.lastMessage.Text = "Attached on";
+            this.lastMessage.Width = 188;
+            // 
+            // timeConn
+            // 
+            this.timeConn.Text = "Last Message";
+            this.timeConn.Width = 154;
             // 
             // IOT
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(772, 423);
-            this.Controls.Add(this.toolStrip1);
+            this.Controls.Add(this.TabControl);
             this.Controls.Add(this.autoScroll);
             this.Controls.Add(this.baudRateBox);
             this.Controls.Add(this.comPortBox);
@@ -363,15 +438,16 @@ namespace IOT_SERVER
             this.Controls.Add(this.lblPort);
             this.Controls.Add(this.StopButton);
             this.Controls.Add(this.StartClientButton);
-            this.Controls.Add(this.textBox);
             this.MaximizeBox = false;
             this.MaximumSize = new System.Drawing.Size(800, 800);
             this.MinimumSize = new System.Drawing.Size(500, 450);
             this.Name = "IOT";
             this.Text = "IOT";
             this.TransparencyKey = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
+            this.TabControl.ResumeLayout(false);
+            this.logPage.ResumeLayout(false);
+            this.Clients.ResumeLayout(false);
+            this.Clients.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -404,9 +480,17 @@ namespace IOT_SERVER
         private System.Windows.Forms.ComboBox comPortBox;
         private System.Windows.Forms.ComboBox baudRateBox;
         private System.Windows.Forms.CheckBox autoScroll;
-        private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripButton ClientListStrip;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.TabControl TabControl;
+        private System.Windows.Forms.TabPage logPage;
+        private System.Windows.Forms.TabPage Clients;
+        private System.Windows.Forms.TextBox ClientsTabTextbox;
+        private System.Windows.Forms.Button ClientsTabSendButton;
+        private System.Windows.Forms.ListView ClientList;
+        private System.Windows.Forms.ColumnHeader Client;
+        private System.Windows.Forms.ColumnHeader Ip;
+        private System.Windows.Forms.ColumnHeader Port;
+        private System.Windows.Forms.ColumnHeader lastMessage;
+        private System.Windows.Forms.ColumnHeader timeConn;
     }
 }
 

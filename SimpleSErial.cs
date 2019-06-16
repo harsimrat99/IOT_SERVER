@@ -20,7 +20,7 @@ public class SimpleSerial
 
     private int Baudrate { get; set; }
 
-    private int Buffer { get; set; }
+    private int Buffer { get;  set; }
 
     private byte[] ReadBuffer;
 
