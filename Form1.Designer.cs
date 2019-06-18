@@ -68,6 +68,7 @@ namespace IOT_SERVER
             this.Port = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lastMessage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.timeConn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.button2 = new System.Windows.Forms.Button();
             this.TabControl.SuspendLayout();
             this.logPage.SuspendLayout();
             this.ClientsTab.SuspendLayout();
@@ -85,7 +86,7 @@ namespace IOT_SERVER
             // 
             // StartClientButton
             // 
-            this.StartClientButton.Location = new System.Drawing.Point(12, 394);
+            this.StartClientButton.Location = new System.Drawing.Point(12, 417);
             this.StartClientButton.Name = "StartClientButton";
             this.StartClientButton.Size = new System.Drawing.Size(109, 22);
             this.StartClientButton.TabIndex = 6;
@@ -95,7 +96,7 @@ namespace IOT_SERVER
             // 
             // StopButton
             // 
-            this.StopButton.Location = new System.Drawing.Point(351, 372);
+            this.StopButton.Location = new System.Drawing.Point(351, 395);
             this.StopButton.Name = "StopButton";
             this.StopButton.Size = new System.Drawing.Size(110, 47);
             this.StopButton.TabIndex = 7;
@@ -120,7 +121,7 @@ namespace IOT_SERVER
             // 
             // Clear
             // 
-            this.Clear.Location = new System.Drawing.Point(602, 397);
+            this.Clear.Location = new System.Drawing.Point(602, 420);
             this.Clear.Name = "Clear";
             this.Clear.Size = new System.Drawing.Size(158, 22);
             this.Clear.TabIndex = 6;
@@ -140,7 +141,7 @@ namespace IOT_SERVER
             // pnl
             // 
             this.pnl.BackColor = System.Drawing.Color.Red;
-            this.pnl.Location = new System.Drawing.Point(182, 372);
+            this.pnl.Location = new System.Drawing.Point(182, 395);
             this.pnl.Name = "pnl";
             this.pnl.Size = new System.Drawing.Size(94, 47);
             this.pnl.TabIndex = 9;
@@ -220,7 +221,7 @@ namespace IOT_SERVER
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(602, 372);
+            this.button4.Location = new System.Drawing.Point(602, 395);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(158, 22);
             this.button4.TabIndex = 21;
@@ -235,7 +236,7 @@ namespace IOT_SERVER
             // 
             // StartServerButton
             // 
-            this.StartServerButton.Location = new System.Drawing.Point(12, 372);
+            this.StartServerButton.Location = new System.Drawing.Point(12, 395);
             this.StartServerButton.Name = "StartServerButton";
             this.StartServerButton.Size = new System.Drawing.Size(109, 22);
             this.StartServerButton.TabIndex = 22;
@@ -312,7 +313,7 @@ namespace IOT_SERVER
             this.autoScroll.AutoSize = true;
             this.autoScroll.Checked = true;
             this.autoScroll.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.autoScroll.Location = new System.Drawing.Point(501, 376);
+            this.autoScroll.Location = new System.Drawing.Point(501, 399);
             this.autoScroll.Name = "autoScroll";
             this.autoScroll.Size = new System.Drawing.Size(72, 17);
             this.autoScroll.TabIndex = 28;
@@ -327,7 +328,7 @@ namespace IOT_SERVER
             this.TabControl.Location = new System.Drawing.Point(12, 5);
             this.TabControl.Name = "TabControl";
             this.TabControl.SelectedIndex = 0;
-            this.TabControl.Size = new System.Drawing.Size(583, 359);
+            this.TabControl.Size = new System.Drawing.Size(583, 388);
             this.TabControl.TabIndex = 30;
             this.TabControl.SelectedIndexChanged += new System.EventHandler(this.TabControl_SelectedIndexChanged);
             // 
@@ -342,29 +343,30 @@ namespace IOT_SERVER
             this.logPage.Text = "Log";
             this.logPage.UseVisualStyleBackColor = true;
             // 
-            // Clients
+            // ClientsTab
             // 
+            this.ClientsTab.Controls.Add(this.button2);
             this.ClientsTab.Controls.Add(this.ClientsTabTextbox);
             this.ClientsTab.Controls.Add(this.ClientsTabSendButton);
             this.ClientsTab.Controls.Add(this.ClientList);
             this.ClientsTab.Location = new System.Drawing.Point(4, 22);
-            this.ClientsTab.Name = "Clients";
+            this.ClientsTab.Name = "ClientsTab";
             this.ClientsTab.Padding = new System.Windows.Forms.Padding(3);
-            this.ClientsTab.Size = new System.Drawing.Size(575, 333);
+            this.ClientsTab.Size = new System.Drawing.Size(575, 362);
             this.ClientsTab.TabIndex = 1;
             this.ClientsTab.Text = "Clients";
             this.ClientsTab.UseVisualStyleBackColor = true;
             // 
             // ClientsTabTextbox
             // 
-            this.ClientsTabTextbox.Location = new System.Drawing.Point(108, 303);
+            this.ClientsTabTextbox.Location = new System.Drawing.Point(108, 337);
             this.ClientsTabTextbox.Name = "ClientsTabTextbox";
             this.ClientsTabTextbox.Size = new System.Drawing.Size(455, 20);
             this.ClientsTabTextbox.TabIndex = 2;
             // 
             // ClientsTabSendButton
             // 
-            this.ClientsTabSendButton.Location = new System.Drawing.Point(6, 301);
+            this.ClientsTabSendButton.Location = new System.Drawing.Point(6, 335);
             this.ClientsTabSendButton.Name = "ClientsTabSendButton";
             this.ClientsTabSendButton.Size = new System.Drawing.Size(93, 23);
             this.ClientsTabSendButton.TabIndex = 1;
@@ -385,7 +387,7 @@ namespace IOT_SERVER
             this.ClientList.HideSelection = false;
             this.ClientList.Location = new System.Drawing.Point(0, 0);
             this.ClientList.Name = "ClientList";
-            this.ClientList.Size = new System.Drawing.Size(574, 295);
+            this.ClientList.Size = new System.Drawing.Size(574, 307);
             this.ClientList.TabIndex = 0;
             this.ClientList.UseCompatibleStateImageBehavior = false;
             this.ClientList.View = System.Windows.Forms.View.Details;
@@ -415,11 +417,21 @@ namespace IOT_SERVER
             this.timeConn.Text = "Last Message";
             this.timeConn.Width = 154;
             // 
+            // button2
+            // 
+            this.button2.Location = new System.Drawing.Point(6, 310);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(93, 23);
+            this.button2.TabIndex = 4;
+            this.button2.Text = "Remove";
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.Button2_Click);
+            // 
             // IOT
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(772, 423);
+            this.ClientSize = new System.Drawing.Size(784, 447);
             this.Controls.Add(this.TabControl);
             this.Controls.Add(this.autoScroll);
             this.Controls.Add(this.baudRateBox);
@@ -497,6 +509,7 @@ namespace IOT_SERVER
         private System.Windows.Forms.ColumnHeader Port;
         private System.Windows.Forms.ColumnHeader lastMessage;
         private System.Windows.Forms.ColumnHeader timeConn;
+        private Button button2;
     }
 }
 

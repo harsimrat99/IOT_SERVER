@@ -3,14 +3,22 @@ using System.Collections;
 using System.Net.Sockets;
 using System.Net;
 using IOT_SERVER;
+using System.Runtime.InteropServices;
 
 public class SimpleServer : NetworkingServer
 {     
     private Hashtable  ClientList;
 
-    private int i = 0;   
+    private int i = 0;
 
-    public  SimpleServer(int port, int listeners)
+    private byte[] ClosingMessage = { ((byte)'e'), ((byte)'o'), ((byte)'f') };
+
+    [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
+    static extern int memcmp(byte[] b1, byte[] b2, long count);
+
+    private CloseConnectionEventArgs e;
+
+    public SimpleServer(int port, int listeners)
 	{
 
         Listeners = listeners;
@@ -128,12 +136,24 @@ public class SimpleServer : NetworkingServer
                 {
                     recvBuffer = new byte[DEFAULT_BUFFER_SIZE];
 
-                    int bytesReceived = ((Socket)Client.Value).Receive(recvBuffer, recvBuffer.Length, SocketFlags.None);
+                    int bytesReceived = ((Socket)Client.Value).Receive(recvBuffer, recvBuffer.Length, SocketFlags.None);                    
 
-                    if (bytesReceived > 0)
+                    if (bytesReceived == 3 && ( memcmp(recvBuffer, ClosingMessage, 3) == 0))
                     {
-                        return ((Socket)Client.Value).RemoteEndPoint.ToString() + " : " + System.Text.Encoding.ASCII.GetString(recvBuffer);
+
+                        CloseConnectionEventArgs e = new CloseConnectionEventArgs { endp = ((Socket)Client.Value).RemoteEndPoint, Name = i.ToString()};
+
+                        Console.WriteLine(recvBuffer);
+
+                        ((Socket)Client.Value).Close();
+
+                        ClientList.Remove((Client.Key));
+
+                        base.OnCloseConnection(e);
+
                     }
+
+                    else if (bytesReceived > 0) return ((Socket)Client.Value).RemoteEndPoint.ToString() + " : " + System.Text.Encoding.ASCII.GetString(recvBuffer);
 
                     else return null;
 
@@ -150,6 +170,8 @@ public class SimpleServer : NetworkingServer
                     }
 
                 }
+
+                
 
             }
 

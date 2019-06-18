@@ -29,6 +29,8 @@ namespace IOT_SERVER
 
         public event EventHandler<AcceptEventArgs> AcceptEvent;
 
+        public event EventHandler <CloseConnectionEventArgs> ConnectionClosed;
+
         public const int DEFAULT_SERVER_PORT = 8080;
 
         public abstract string Init();
@@ -46,10 +48,24 @@ namespace IOT_SERVER
 
         }
 
+        public class CloseConnectionEventArgs : EventArgs {
+
+            public EndPoint endp;
+
+            public string Name;
+
+        }
+
         protected void OnAcceptEvent(AcceptEventArgs ae)
         {
 
             AcceptEvent.Invoke(this, ae);
+
+        }
+
+        protected void OnCloseConnection(CloseConnectionEventArgs e) {
+
+            ConnectionClosed.Invoke(this,e);
 
         }
 

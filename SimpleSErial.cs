@@ -142,9 +142,7 @@ public class SimpleSerial
     }
 
     public void Close() {
-
         Serial.Close();        
-
     }
 
 

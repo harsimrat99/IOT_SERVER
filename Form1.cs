@@ -207,11 +207,19 @@ namespace IOT_SERVER
 
                     ClientWorker.CancelAsync();
 
-                    try { myClient.Disconnect(); Serial.Close(); }
+                    try {
+
+                        while (myClient.Disconnect() < 0) { AppendText("Problem Disconnecting."); }
+
+                        Serial.Close();
+
+                    }
 
                     catch (Exception) { }
 
                     finally { State = MODE.NONE; }
+
+                    AppendText("Succesfully Disconnected.");
 
                     break;
 
@@ -224,6 +232,8 @@ namespace IOT_SERVER
                     catch (Exception) { }
 
                     finally { State = MODE.NONE; }
+
+                    AppendText("Succesfully closed server.");
 
                     break;
 
@@ -302,6 +312,8 @@ namespace IOT_SERVER
 
             Server.AcceptEvent += Server_AcceptEvent;
 
+            Server.ConnectionClosed += Server_ConnectionClosed;
+
             String s = Server.Init();
 
             AppendText(s);
@@ -334,7 +346,18 @@ namespace IOT_SERVER
 
         }
 
-        private void Server_AcceptEvent(object sender, SimpleServer.AcceptEventArgs e)
+        private void Server_ConnectionClosed(object sender, NetworkingServer.CloseConnectionEventArgs e)
+        {
+
+            Console.WriteLine(ClientList.Items.ContainsKey(e.endp.ToString()));
+
+ 
+            ClientList.Items.RemoveByKey(e.endp.ToString());
+
+
+        }
+
+        private void Server_AcceptEvent(object sender, NetworkingServer.AcceptEventArgs e)
         {
             Console.WriteLine("Event");
 
@@ -468,6 +491,15 @@ namespace IOT_SERVER
             if (this.State == MODE.CLIENT && this.TabControl.SelectedTab == ClientsTab) {
                 (this.TabControl).SelectedTab = ClientsTab;
             }
+        }
+
+        private void Button2_Click(object sender, EventArgs e)
+        {            
+            try
+            {
+                Server_ConnectionClosed(null, null);
+            }
+            catch (Exception eee) { }
         }
     }
 }

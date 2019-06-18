@@ -39,6 +39,8 @@ namespace IOT_SERVER
 
         private int timeOut = 0;
 
+        private byte[] ClosingMessage = { ((byte)'e'), ((byte)'o'), ((byte)'f') };
+
         public const int B_SIZE_DEAFULT = 200;
 
         public const short PORT_DEFAULT = 8080;
@@ -174,7 +176,11 @@ namespace IOT_SERVER
 
                 Console.WriteLine("Attempting socket closure.");
 
-                socket.Close();
+                if (Write(ClosingMessage) == 3)
+
+                    socket.Close();
+
+                else return -1;
 
             }
 
