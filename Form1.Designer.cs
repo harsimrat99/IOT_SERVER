@@ -60,6 +60,7 @@ namespace IOT_SERVER
             this.TabControl = new System.Windows.Forms.TabControl();
             this.logPage = new System.Windows.Forms.TabPage();
             this.ClientsTab = new System.Windows.Forms.TabPage();
+            this.RemoveClientButton = new System.Windows.Forms.Button();
             this.ClientsTabTextbox = new System.Windows.Forms.TextBox();
             this.ClientsTabSendButton = new System.Windows.Forms.Button();
             this.ClientList = new System.Windows.Forms.ListView();
@@ -68,7 +69,6 @@ namespace IOT_SERVER
             this.Port = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lastMessage = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.timeConn = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.button2 = new System.Windows.Forms.Button();
             this.TabControl.SuspendLayout();
             this.logPage.SuspendLayout();
             this.ClientsTab.SuspendLayout();
@@ -80,7 +80,7 @@ namespace IOT_SERVER
             this.textBox.Location = new System.Drawing.Point(0, 0);
             this.textBox.Name = "textBox";
             this.textBox.ReadOnly = true;
-            this.textBox.Size = new System.Drawing.Size(575, 333);
+            this.textBox.Size = new System.Drawing.Size(575, 362);
             this.textBox.TabIndex = 9;
             this.textBox.Text = "";
             // 
@@ -338,14 +338,14 @@ namespace IOT_SERVER
             this.logPage.Location = new System.Drawing.Point(4, 22);
             this.logPage.Name = "logPage";
             this.logPage.Padding = new System.Windows.Forms.Padding(3);
-            this.logPage.Size = new System.Drawing.Size(575, 333);
+            this.logPage.Size = new System.Drawing.Size(575, 362);
             this.logPage.TabIndex = 0;
             this.logPage.Text = "Log";
             this.logPage.UseVisualStyleBackColor = true;
             // 
             // ClientsTab
             // 
-            this.ClientsTab.Controls.Add(this.button2);
+            this.ClientsTab.Controls.Add(this.RemoveClientButton);
             this.ClientsTab.Controls.Add(this.ClientsTabTextbox);
             this.ClientsTab.Controls.Add(this.ClientsTabSendButton);
             this.ClientsTab.Controls.Add(this.ClientList);
@@ -357,11 +357,22 @@ namespace IOT_SERVER
             this.ClientsTab.Text = "Clients";
             this.ClientsTab.UseVisualStyleBackColor = true;
             // 
+            // RemoveClientButton
+            // 
+            this.RemoveClientButton.Location = new System.Drawing.Point(6, 310);
+            this.RemoveClientButton.Name = "RemoveClientButton";
+            this.RemoveClientButton.Size = new System.Drawing.Size(93, 23);
+            this.RemoveClientButton.TabIndex = 4;
+            this.RemoveClientButton.Text = "Remove";
+            this.RemoveClientButton.UseVisualStyleBackColor = true;
+            this.RemoveClientButton.Click += new System.EventHandler(this.RemoveClientButtonEvent);
+            // 
             // ClientsTabTextbox
             // 
-            this.ClientsTabTextbox.Location = new System.Drawing.Point(108, 337);
+            this.ClientsTabTextbox.Location = new System.Drawing.Point(108, 313);
+            this.ClientsTabTextbox.Multiline = true;
             this.ClientsTabTextbox.Name = "ClientsTabTextbox";
-            this.ClientsTabTextbox.Size = new System.Drawing.Size(455, 20);
+            this.ClientsTabTextbox.Size = new System.Drawing.Size(455, 44);
             this.ClientsTabTextbox.TabIndex = 2;
             // 
             // ClientsTabSendButton
@@ -416,16 +427,6 @@ namespace IOT_SERVER
             // 
             this.timeConn.Text = "Last Message";
             this.timeConn.Width = 154;
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(6, 310);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(93, 23);
-            this.button2.TabIndex = 4;
-            this.button2.Text = "Remove";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.Button2_Click);
             // 
             // IOT
             // 
@@ -509,7 +510,7 @@ namespace IOT_SERVER
         private System.Windows.Forms.ColumnHeader Port;
         private System.Windows.Forms.ColumnHeader lastMessage;
         private System.Windows.Forms.ColumnHeader timeConn;
-        private Button button2;
+        private Button RemoveClientButton;
     }
 }
 

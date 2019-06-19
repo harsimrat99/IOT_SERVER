@@ -39,6 +39,8 @@ namespace IOT_SERVER
 
         public abstract void Accept();
 
+        public abstract void RemoveClient(int key);
+
         public class AcceptEventArgs : EventArgs
         {
 
@@ -52,7 +54,7 @@ namespace IOT_SERVER
 
             public EndPoint endp;
 
-            public string Name;
+            public int Key;
 
         }
 

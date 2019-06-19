@@ -114,6 +114,8 @@ namespace IOT_SERVER
 
             myClient = new NetworkingClient(type, GetComboSelectedText(addressBox).Trim(), Int32.Parse(GetComboSelectedText(portBox).Trim()), bufferLength);
 
+            myClient.ServerDisconnect += MyClient_ServerDisconnect;
+
             myEncoder = new Encoder(Encoder.DEFAULT_LENGTH_BUFFER, "ascii");
 
             Serial = new SimpleSerial(GetComboSelectedText(comPortBox), Int32.Parse(GetComboSelectedText(baudRateBox)), true);
@@ -175,6 +177,15 @@ namespace IOT_SERVER
 
         }
 
+        private void MyClient_ServerDisconnect(object sender, EventArgs e)
+        {
+
+            AppendText("Server disconnected.");
+
+            StopButtonEvent(sender, e);
+            
+        }
+
         private string GetComboSelectedText(System.Windows.Forms.ComboBox control) {
 
 
@@ -209,7 +220,7 @@ namespace IOT_SERVER
 
                     try {
 
-                        while (myClient.Disconnect() < 0) { AppendText("Problem Disconnecting."); }
+                       myClient.Disconnect(); 
 
                         Serial.Close();
 
@@ -223,15 +234,15 @@ namespace IOT_SERVER
 
                     break;
 
-                case MODE.SERVER:
+                case MODE.SERVER:                                        
 
-                    ServerWorker.CancelAsync();
+                    ServerWorker.CancelAsync();                    
 
-                    try { Server.Close();  }
+                    Thread.Sleep(500);                   
 
-                    catch (Exception) { }
+                    Server.Close();                    
 
-                    finally { State = MODE.NONE; }
+                    State = MODE.NONE;
 
                     AppendText("Succesfully closed server.");
 
@@ -239,8 +250,10 @@ namespace IOT_SERVER
 
             }
 
-            State = MODE.NONE;
+            this.ClientList.Items.Clear();
 
+            State = MODE.NONE;
+            
             pnl.BackColor = Color.Red; 
 
         }
@@ -348,12 +361,13 @@ namespace IOT_SERVER
 
         private void Server_ConnectionClosed(object sender, NetworkingServer.CloseConnectionEventArgs e)
         {
-
-            Console.WriteLine(ClientList.Items.ContainsKey(e.endp.ToString()));
-
- 
-            ClientList.Items.RemoveByKey(e.endp.ToString());
-
+             
+            this.Invoke((MethodInvoker)delegate 
+            
+            {
+                ClientList.Items.RemoveByKey(e.Key.ToString());                
+                
+            });
 
         }
 
@@ -363,15 +377,17 @@ namespace IOT_SERVER
 
             ListViewItem item = new ListViewItem();
 
-            item.Name = e.endp.ToString(); ;
+            string remote = e.endp.ToString();
+
+            item.Name = e.Name; 
 
             item.Text = e.Name;
 
-            int index = item.Name.IndexOf(":");
+            int index = remote.IndexOf(":");
 
-            item.SubItems.Add(item.Name.Substring(0, index));
+            item.SubItems.Add(remote.Substring(0, index));
 
-            item.SubItems.Add(item.Name.Substring(index + 1));
+            item.SubItems.Add(remote.Substring(index + 1));
 
             item.SubItems.Add(DateTime.Now.ToString());
 
@@ -493,13 +509,12 @@ namespace IOT_SERVER
             }
         }
 
-        private void Button2_Click(object sender, EventArgs e)
-        {            
-            try
-            {
-                Server_ConnectionClosed(null, null);
-            }
-            catch (Exception eee) { }
+        private void RemoveClientButtonEvent(object sender, EventArgs e)
+        {
+            for (int  i = 0; i < ClientList.SelectedItems.Count; i++)
+
+                Server.RemoveClient(Int32.Parse(ClientList.SelectedItems[i].Text));
+
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Net;
+using System.Runtime.InteropServices;
 
 namespace IOT_SERVER
 {
@@ -19,23 +20,24 @@ namespace IOT_SERVER
 
         //private NetworkStream netStream;
 
+        [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
+        static extern int memcmp(byte[] b1, byte[] b2, long count);
+
         private IPEndPoint currentEndpoint;
 
-        protected private Socket socket;
+        private Socket socket;
 
         private IPHostEntry host;
 
-        private ProtoType _type;        
+        private ProtoType _type;                
 
-        private int port;
-
-        private int bufferLength;        
-
-        public byte[] readBuffer;
+        private int bufferLength;                
 
         private byte[] recvPacket;
 
-        protected private int bytesReceived;
+        private int bytesReceived;
+
+        private int port;
 
         private int timeOut = 0;
 
@@ -48,6 +50,10 @@ namespace IOT_SERVER
         public const int TIMEOUT_DEFAULT = 3000;
 
         public const int DEFAULT_RETRIES = 3;
+
+        public event EventHandler ServerDisconnect;
+
+        public byte[] readBuffer;
 
         public enum ProtoType {
 
@@ -172,9 +178,7 @@ namespace IOT_SERVER
         public int Disconnect() {
 
             try
-            {
-
-                Console.WriteLine("Attempting socket closure.");
+            {                
 
                 if (Write(ClosingMessage) == 3)
 
@@ -291,7 +295,15 @@ namespace IOT_SERVER
             if (!(socket.Available > 0)) return -1;
 
             bytesReceived = socket.Receive(readBuffer, bufferLength, SocketFlags.None);
-                        
+
+            if (bytesReceived == 3 && (memcmp(readBuffer, ClosingMessage, 3)) == 0) {
+
+                if (this.Disconnect() == 1)
+
+                    ServerDisconnect.Invoke(this,EventArgs.Empty);                
+
+            }
+
             return bytesReceived;
         }
         
