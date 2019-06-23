@@ -14,9 +14,9 @@ namespace IOT_SERVER
 
         protected const int DEFAULT_BUFFER_SIZE = 100;
 
-        protected const int DEFAULT_TIMEOUT_RECEIVE = 1000;
+        protected const int DEFAULT_TIMEOUT_RECEIVE = 1000;        
 
-        //5 milli seconds
+        //5 milli seconds polling for accept
         protected const int DEFAULT_POLL_MICROS = 50000;
 
         protected byte[] recvBuffer;
@@ -30,6 +30,8 @@ namespace IOT_SERVER
         public event EventHandler<AcceptEventArgs> AcceptEvent;
 
         public event EventHandler <CloseConnectionEventArgs> ConnectionClosed;
+
+        public event EventHandler <ReceiveMessageEventArgs> MessageReceived;
 
         public const int DEFAULT_SERVER_PORT = 8080;
 
@@ -58,6 +60,16 @@ namespace IOT_SERVER
 
         }
 
+        public class ReceiveMessageEventArgs : EventArgs {
+
+            public EndPoint endp;
+
+            public int key;
+
+            public string message;
+
+        }
+
         protected void OnAcceptEvent(AcceptEventArgs ae)
         {
 
@@ -68,6 +80,12 @@ namespace IOT_SERVER
         protected void OnCloseConnection(CloseConnectionEventArgs e) {
 
             ConnectionClosed.Invoke(this,e);
+
+        }
+
+        protected void OnReceiveMessage(ReceiveMessageEventArgs e) {
+
+            MessageReceived.Invoke(this,e);
 
         }
 

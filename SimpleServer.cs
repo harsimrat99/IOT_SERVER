@@ -4,19 +4,18 @@ using System.Net.Sockets;
 using System.Net;
 using IOT_SERVER;
 using System.Runtime.InteropServices;
+using System.Text;
 
 public class SimpleServer : NetworkingServer
 {     
     private Hashtable  ClientsList;
 
-    private ArrayList ClientsToBeRemoved = new ArrayList(5);
+    private ArrayList ClientsToServiced = new ArrayList(5);
 
     private int i = 0;
 
     private object MyLock = new object();
-
-    private byte[] ClosingMessage = { ((byte)'e'), ((byte)'o'), ((byte)'f') };
-
+  
     public SimpleServer(int port, int listeners)
 	{
 
@@ -39,7 +38,9 @@ public class SimpleServer : NetworkingServer
     }
 
     [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
-    static extern int memcmp(byte[] b1, byte[] b2, long count);
+    private static extern int memcmp(byte[] b1, byte[] b2, long count);
+    [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
+    private static extern int memset(byte[] b1, byte val, int length);
 
     public override string Init()
     {
@@ -56,6 +57,7 @@ public class SimpleServer : NetworkingServer
 
             Server.Listen(Listeners);    
                        
+            recvBuffer = new byte[DEFAULT_BUFFER_SIZE]; ;
 
         }
 
@@ -72,28 +74,6 @@ public class SimpleServer : NetworkingServer
 
         return "SUCCESFULLY INITIALISED AT PORT " + Port.ToString();
 
-    }
-
-    private void Cleanup()
-    {
-        lock (MyLock)
-        {
-
-            for (int i = 0; i < ClientsToBeRemoved.Count; i++)
-            {
-                ((Socket)ClientsList[((CloseConnectionEventArgs)ClientsToBeRemoved[i]).Key]).SendTimeout = 10;
-
-                ((Socket)ClientsList[((CloseConnectionEventArgs)ClientsToBeRemoved[i]).Key]).Send(ClosingMessage);
-
-                ((Socket)ClientsList[((CloseConnectionEventArgs)ClientsToBeRemoved[i]).Key]).Close();
-
-                ClientsList.Remove(((CloseConnectionEventArgs)ClientsToBeRemoved[i]).Key);
-
-                base.OnCloseConnection(((CloseConnectionEventArgs)ClientsToBeRemoved[i]));
-
-            }
-        }
-        ClientsToBeRemoved.Clear();
     }
 
     public override void Accept() {
@@ -148,37 +128,89 @@ public class SimpleServer : NetworkingServer
 
                 if (((Socket)Client.Value).Available > 0)
                 {
-                    
-                    recvBuffer = new byte[DEFAULT_BUFFER_SIZE];
 
-                    int bytesReceived = ((Socket)Client.Value).Receive(recvBuffer, recvBuffer.Length, SocketFlags.None);
+                    ReceiveMessageEventArgs args = new ReceiveMessageEventArgs();
 
-                    if (bytesReceived == 3 && (memcmp(recvBuffer, ClosingMessage, 3) == 0))
-                    {
+                    args.endp = ((Socket)Client.Value).RemoteEndPoint;
 
-                        CloseConnectionEventArgs args = new CloseConnectionEventArgs();
+                    args.key = (int) (Client.Key);
 
-                        args.endp = ((Socket)Client.Value).RemoteEndPoint;
-
-                        args.Key = (int) (Client.Key);
-
-                        ClientsToBeRemoved.Add((args));
-
-                    }
-
-                    else if (bytesReceived > 0) return ((Socket)Client.Value).RemoteEndPoint.ToString() + " : " + System.Text.Encoding.ASCII.GetString(recvBuffer);
-
-                    else return null;
+                    ClientsToServiced.Add((args));
                    
                 }
 
             }
 
-            Cleanup();
+            ParseMessages();
 
         }
 
         return null;
+
+    }
+
+    private void ParseMessages() {
+
+        if (ClientsToServiced.Count == 0) return;
+
+        int bytesReceived = DEFAULT_BUFFER_SIZE;
+
+        Message message = new Message("","","");
+
+        for (int i = 0; i < ClientsToServiced.Count; i++)
+        {
+
+            memset(recvBuffer, 0, bytesReceived);
+
+            bytesReceived = ((Socket)ClientsList[((ReceiveMessageEventArgs)ClientsToServiced[i]).key]).Receive(recvBuffer, recvBuffer.Length, SocketFlags.None);
+
+            message = MessageParser.GetMessage(recvBuffer);
+
+            switch (message.COMMAND) {
+
+                case Command.SEND:
+                    {
+                        int key = Int32.Parse(message.ARGUMENTS);
+
+                        if (ClientsList.Contains(key)) SendMessage(key, Encoding.ASCII.GetBytes(message.OPTIONS));
+
+                        break;
+                    }
+
+                case Command.CLOSE:
+                    {
+                        ((Socket)ClientsList[((ReceiveMessageEventArgs)ClientsToServiced[i]).key]).Close();
+
+                        ClientsList.Remove(((ReceiveMessageEventArgs)ClientsToServiced[i]).key);
+
+                        base.OnCloseConnection(new CloseConnectionEventArgs { Key = ((ReceiveMessageEventArgs)ClientsToServiced[i]).key });
+
+                        break;
+                    }
+
+                case Command.POST:
+                    {
+                        ((Socket)ClientsList[((ReceiveMessageEventArgs)ClientsToServiced[i]).key]).Close();
+
+                        ClientsList.Remove(((ReceiveMessageEventArgs)ClientsToServiced[i]).key);
+
+                        base.OnCloseConnection(new CloseConnectionEventArgs { Key = ((ReceiveMessageEventArgs)ClientsToServiced[i]).key });
+
+                        break;
+                    }
+
+                default: {
+
+                        Console.WriteLine("Command not parsed." + message.ToString());                        
+
+                        break;
+                    }
+            }
+
+
+        }
+
+        ClientsToServiced.Clear();
 
     }
 
@@ -207,8 +239,10 @@ public class SimpleServer : NetworkingServer
     {
         lock (MyLock)
         {
-            this.ClientsToBeRemoved.Add(new CloseConnectionEventArgs { Key = key });
+            ClientsList.Remove((int)key);
         }
+
+        base.OnCloseConnection(new CloseConnectionEventArgs { Key = key});
     }
 }
 

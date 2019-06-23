@@ -222,7 +222,7 @@ namespace IOT_SERVER
 
                        myClient.Disconnect(); 
 
-                        Serial.Close();
+                       Serial.Close();
 
                     }
 
@@ -373,7 +373,6 @@ namespace IOT_SERVER
 
         private void Server_AcceptEvent(object sender, NetworkingServer.AcceptEventArgs e)
         {
-            Console.WriteLine("Event");
 
             ListViewItem item = new ListViewItem();
 

@@ -6,14 +6,11 @@ using System.Threading.Tasks;
 
 namespace IOT_SERVER
 {
-    class ProtocolFramer
+    struct Argument
     {
-       
-        public static byte[] WrapMessage() {
+        private string Arguments;
 
-            return null;
-
-        }
+        public const string NULLARGS = "NULL";
 
     }
 }

@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 
 namespace IOT_SERVER
 {
-    class NetworkingClient
+    public class NetworkingClient
     {
         /*
          *  Client Model : connect ->  send/receive -> close
@@ -40,8 +40,6 @@ namespace IOT_SERVER
         private int port;
 
         private int timeOut = 0;
-
-        private byte[] ClosingMessage = { ((byte)'e'), ((byte)'o'), ((byte)'f') };
 
         public const int B_SIZE_DEAFULT = 200;
 
@@ -178,13 +176,17 @@ namespace IOT_SERVER
         public int Disconnect() {
 
             try
-            {                
+            {
 
-                if (Write(ClosingMessage) == 3)
+                Message close = new Message();
 
-                    socket.Close();
+                MessageBuilder mb = new MessageBuilder();
 
-                else return -1;
+                close = mb.CreateMessage(Command.CLOSE, Argument.NULLARGS, Option.NULLPARAM);
+
+                socket.Send(mb.GetBytes(close));
+
+                socket.Close();               
 
             }
 
@@ -193,6 +195,8 @@ namespace IOT_SERVER
                 Console.WriteLine(se.ErrorCode);
 
                 throw new SocketException(se.ErrorCode);
+
+                return -1;
 
             }
 
@@ -295,14 +299,6 @@ namespace IOT_SERVER
             if (!(socket.Available > 0)) return -1;
 
             bytesReceived = socket.Receive(readBuffer, bufferLength, SocketFlags.None);
-
-            if (bytesReceived == 3 && (memcmp(readBuffer, ClosingMessage, 3)) == 0) {
-
-                if (this.Disconnect() == 1)
-
-                    ServerDisconnect.Invoke(this,EventArgs.Empty);                
-
-            }
 
             return bytesReceived;
         }
