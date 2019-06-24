@@ -15,7 +15,11 @@ public class SimpleServer : NetworkingServer
     private int i = 0;
 
     private object MyLock = new object();
-  
+
+    private Message message = new Message("", "", "");
+
+    private MessageBuilder builder = new MessageBuilder();
+
     public SimpleServer(int port, int listeners)
 	{
 
@@ -37,8 +41,6 @@ public class SimpleServer : NetworkingServer
 
     }
 
-    [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
-    private static extern int memcmp(byte[] b1, byte[] b2, long count);
     [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
     private static extern int memset(byte[] b1, byte val, int length);
 
@@ -117,7 +119,7 @@ public class SimpleServer : NetworkingServer
 
     }
 
-    public String GetMessage()
+    public void GetMessage()
     {
 
         lock (MyLock)
@@ -145,7 +147,6 @@ public class SimpleServer : NetworkingServer
 
         }
 
-        return null;
 
     }
 
@@ -153,9 +154,7 @@ public class SimpleServer : NetworkingServer
 
         if (ClientsToServiced.Count == 0) return;
 
-        int bytesReceived = DEFAULT_BUFFER_SIZE;
-
-        Message message = new Message("","","");
+        int bytesReceived = DEFAULT_BUFFER_SIZE;        
 
         for (int i = 0; i < ClientsToServiced.Count; i++)
         {
@@ -190,11 +189,9 @@ public class SimpleServer : NetworkingServer
 
                 case Command.POST:
                     {
-                        ((Socket)ClientsList[((ReceiveMessageEventArgs)ClientsToServiced[i]).key]).Close();
+                        ((ReceiveMessageEventArgs)ClientsToServiced[i]).message = message.ARGUMENTS;
 
-                        ClientsList.Remove(((ReceiveMessageEventArgs)ClientsToServiced[i]).key);
-
-                        base.OnCloseConnection(new CloseConnectionEventArgs { Key = ((ReceiveMessageEventArgs)ClientsToServiced[i]).key });
+                        base.OnReceiveMessage(((ReceiveMessageEventArgs)ClientsToServiced[i]));
 
                         break;
                     }
@@ -212,6 +209,17 @@ public class SimpleServer : NetworkingServer
 
         ClientsToServiced.Clear();
 
+    }
+
+    public int SendMessage(int key, string message) {
+
+        this.message.COMMAND = Command.POST;
+        this.message.ARGUMENTS = message;
+        this.message.OPTIONS = Option.NULLPARAM;
+
+        SendMessage(key,builder.GetBytes(this.message));
+
+        return -1;
     }
 
     public int SendMessage(int key, byte[] buff)
@@ -239,7 +247,18 @@ public class SimpleServer : NetworkingServer
     {
         lock (MyLock)
         {
-            ClientsList.Remove((int)key);
+
+            Message close = new Message(Command.CLOSE, Argument.NULLARGS, Option.NULLPARAM);
+
+            MessageBuilder mb = new MessageBuilder();
+
+            try { Server.Send(mb.GetBytes(close)); }
+
+            catch (Exception) { }
+
+            ((Socket)ClientsList[key]).Close();
+
+            ClientsList.Remove((int) key);
         }
 
         base.OnCloseConnection(new CloseConnectionEventArgs { Key = key});

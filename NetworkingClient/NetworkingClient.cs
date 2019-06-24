@@ -21,7 +21,7 @@ namespace IOT_SERVER
         //private NetworkStream netStream;
 
         [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
-        static extern int memcmp(byte[] b1, byte[] b2, long count);
+        private static extern int memset(byte[] b1, byte val, int length);
 
         private IPEndPoint currentEndpoint;
 
@@ -29,9 +29,13 @@ namespace IOT_SERVER
 
         private IPHostEntry host;
 
-        private ProtoType _type;                
+        private ProtoType _type;
 
-        private int bufferLength;                
+        private Message message;
+
+        private int bufferLength;
+
+        private byte[] readBuffer;
 
         private byte[] recvPacket;
 
@@ -49,9 +53,17 @@ namespace IOT_SERVER
 
         public const int DEFAULT_RETRIES = 3;
 
-        public event EventHandler ServerDisconnect;
+        public event EventHandler <ClientRecvEventArgs> ClientReceiveEvent;
 
-        public byte[] readBuffer;
+        public event EventHandler ServerDisconnectedEvent;
+
+        public class ClientRecvEventArgs : EventArgs {
+
+            public string message;
+
+            public EndPoint endp;
+
+        }
 
         public enum ProtoType {
 
@@ -119,6 +131,8 @@ namespace IOT_SERVER
             socket.SendBufferSize = bufferLength;
 
             readBuffer = new byte[this.bufferLength];
+
+            message = new Message("", "", "");
 
             return 1;
 
@@ -225,7 +239,14 @@ namespace IOT_SERVER
 
         public int Write(String msg) {
 
-            throw new NotImplementedException();
+            Message newMsg = new Message(Command.SEND, msg.Substring(0, 1 + msg.IndexOf("|")), msg.Substring(1+ msg.IndexOf("|")));
+
+            MessageBuilder mb = new MessageBuilder();
+
+            this.Write(mb.GetBytes(newMsg));
+
+            return 1;
+
 
         }
 
@@ -298,7 +319,91 @@ namespace IOT_SERVER
 
             if (!(socket.Available > 0)) return -1;
 
+            memset(readBuffer, 0, bytesReceived);
+
             bytesReceived = socket.Receive(readBuffer, bufferLength, SocketFlags.None);
+
+            message = MessageParser.GetMessage(readBuffer);
+
+            switch (message.COMMAND)
+            {
+
+                case Command.SEND:
+                    {
+                      
+                        break;
+                    }
+
+                case Command.CLOSE:
+                    {
+                        ServerDisconnectedEvent.Invoke(this, EventArgs.Empty); ;
+
+                        break;
+                    }
+
+                case Command.POST:
+                    {
+
+                        switch (message.ARGUMENTS) {
+
+
+                            case Argument.ON: {
+
+                                    ClientRecvEventArgs args = new ClientRecvEventArgs();
+
+                                    args.endp = socket.RemoteEndPoint;
+
+                                    args.message = "ON";
+
+                                    ClientReceiveEvent.Invoke(this, args);
+
+                                    break;
+
+                                }
+
+
+
+                            case Argument.OFF: {
+
+                                    ClientRecvEventArgs args = new ClientRecvEventArgs();
+
+                                    args.endp = socket.RemoteEndPoint;
+
+                                    args.message = "OFF";
+
+                                    ClientReceiveEvent.Invoke(this, args);
+
+                                    break;
+
+                                }
+
+                            default:
+
+                                ClientRecvEventArgs e = new ClientRecvEventArgs();
+
+                                e.endp = socket.RemoteEndPoint;
+
+                                e.message = message.ARGUMENTS;
+
+                                ClientReceiveEvent.Invoke(this, e);
+
+                                break;
+
+
+                        }
+
+                        break;
+
+                    }
+
+                default:
+                    {
+
+                        Console.WriteLine("Command not parsed." + message.ToString());
+
+                        break;
+                    }
+            }
 
             return bytesReceived;
         }

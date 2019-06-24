@@ -112,20 +112,28 @@ namespace IOT_SERVER
 
             //AppendText(type.ToString());
 
-            myClient = new NetworkingClient(type, GetComboSelectedText(addressBox).Trim(), Int32.Parse(GetComboSelectedText(portBox).Trim()), bufferLength);
-
-            myClient.ServerDisconnect += MyClient_ServerDisconnect;
+            myClient = new NetworkingClient(type, GetComboSelectedText(addressBox).Trim(), Int32.Parse(GetComboSelectedText(portBox).Trim()), bufferLength);            
 
             myEncoder = new Encoder(Encoder.DEFAULT_LENGTH_BUFFER, "ascii");
 
+            myClient.ClientReceiveEvent += MyClient_ClientReceiveEvent;
+
+            myClient.ServerDisconnectedEvent += MyClient_ServerDisconnectedEvent;
+
             Serial = new SimpleSerial(GetComboSelectedText(comPortBox), Int32.Parse(GetComboSelectedText(baudRateBox)), true);
+
+            Message SerialMessenger = new Message(Command.POST,"",Option.NULLPARAM);
+
+            MessageBuilder builder = new MessageBuilder();
 
             Serial.DataReady += delegate
             {
 
                 String data = Serial.ReadString();
 
-                myClient.Write(myEncoder.Encode(Encoding.ASCII.GetBytes(data)));
+                SerialMessenger.ARGUMENTS = data;
+
+                myClient.Write(myEncoder.Encode(builder.GetBytes(SerialMessenger)));
 
                 textBox.AppendText(data);
 
@@ -164,26 +172,27 @@ namespace IOT_SERVER
 
                 int btsRecv = myClient.Read();
 
-                if (btsRecv > 0)
-                {
-
-                    AppendText("\nMessage from: " + myClient.Ip().ToString() + " " + Encoding.ASCII.GetString(myClient.readBuffer));                   
-
-                }
-
                 Thread.Sleep(10);
 
             }
 
         }
 
-        private void MyClient_ServerDisconnect(object sender, EventArgs e)
+        private void MyClient_ServerDisconnectedEvent(object sender, EventArgs e)
         {
+            AppendText("Server Disconnected.");
 
-            AppendText("Server disconnected.");
+            StopButtonEvent(this, EventArgs.Empty);
+        }
 
-            StopButtonEvent(sender, e);
-            
+        private void MyClient_ClientReceiveEvent(object sender, NetworkingClient.ClientRecvEventArgs e)
+        {
+            AppendText("Message  from:" + e.endp.ToString() + " : " + e.message);
+
+            if (e.message == "ON") Serial.WriteBytes(new byte[] { 1 });
+
+            else if (e.message == "OFF") Serial.WriteBytes(new byte[] { 0 });
+
         }
 
         private string GetComboSelectedText(System.Windows.Forms.ComboBox control) {
@@ -226,7 +235,11 @@ namespace IOT_SERVER
 
                     }
 
-                    catch (Exception) { }
+                    catch (Exception ex) {
+
+                        AppendText(ex.Message);
+
+                    }
 
                     finally { State = MODE.NONE; }
 
@@ -291,7 +304,7 @@ namespace IOT_SERVER
 
                 case MODE.CLIENT:
 
-                    myClient.Write(myEncoder.Encode(Encoding.ASCII.GetBytes(message)));
+                    myClient.Write(message);
 
                     break;
 
@@ -327,6 +340,8 @@ namespace IOT_SERVER
 
             Server.ConnectionClosed += Server_ConnectionClosed;
 
+            Server.MessageReceived += Server_MessageReceived;
+
             String s = Server.Init();
 
             AppendText(s);
@@ -337,7 +352,7 @@ namespace IOT_SERVER
             {
                 Server.Accept();
 
-                s = (Server.GetMessage());
+               Server.GetMessage();
           
                 if (s != null)
                 {
@@ -357,6 +372,11 @@ namespace IOT_SERVER
 
             }
 
+        }
+
+        private void Server_MessageReceived(object sender, NetworkingServer.ReceiveMessageEventArgs e)
+        {
+            AppendText("Message from:" + e.endp.ToString() + ": " +e.message);
         }
 
         private void Server_ConnectionClosed(object sender, NetworkingServer.CloseConnectionEventArgs e)
@@ -489,13 +509,11 @@ namespace IOT_SERVER
         }
 
         private  void ClientsTabSendButton_Click(object sender, EventArgs e)
-        {
-            
-            byte[] buff = myEncoder.Encode(Encoding.ASCII.GetBytes(this.ClientsTabTextbox.Text.Trim()));
+        {                                 
 
             for (int i = 0; i < ClientList.SelectedItems.Count; i++) {
 
-                Server.SendMessage(Int32.Parse(ClientList.SelectedItems[i].Text), buff);
+                Server.SendMessage(Int32.Parse(ClientList.SelectedItems[i].Text), this.ClientsTabTextbox.Text.Trim());
 
             }
 
@@ -514,6 +532,20 @@ namespace IOT_SERVER
 
                 Server.RemoveClient(Int32.Parse(ClientList.SelectedItems[i].Text));
 
+        }
+
+        private void Button1_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < ClientList.SelectedItems.Count; i++)
+
+                Server.SendMessage(Int32.Parse(ClientList.SelectedItems[i].Text), "ON");
+        }
+
+        private void Button2_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < ClientList.SelectedItems.Count; i++)
+
+                Server.SendMessage(Int32.Parse(ClientList.SelectedItems[i].Text), "OFF");
         }
     }
 }

@@ -12,5 +12,9 @@ namespace IOT_SERVER
 
         public const string NULLARGS = "NULL";
 
+        public const string ON = "on";
+
+        public const string OFF = "off";
+
     }
 }

@@ -13,7 +13,7 @@ namespace IOT_SERVER
 
             return msg;
 
-        }
+        }        
 
         public byte[] GetBytes(Message m)
         {
