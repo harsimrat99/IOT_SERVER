@@ -66,10 +66,10 @@
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>58CDB9DBDBCFC0C9FD215150D4FB7B5BFA72BA20</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>6A0F9B571E7A26B6E900A367AB179FBF2EE8CF2F</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>IOT_SERVER_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>IOT_SERVER_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic" />
@@ -118,7 +118,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="IOT_SERVER_TemporaryKey.pfx" />
+    <None Include="IOT_SERVER_1_TemporaryKey.pfx" />
     <None Include="Properties\app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
