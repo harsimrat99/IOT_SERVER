@@ -330,12 +330,15 @@ namespace IOT_SERVER
 
                 case Command.SEND:
                     {
-                      
+                        Console.WriteLine("SEND received");
+
                         break;
                     }
 
                 case Command.CLOSE:
                     {
+                        Console.WriteLine("CLOSE received");
+
                         ServerDisconnectedEvent.Invoke(this, EventArgs.Empty); ;
 
                         break;
@@ -344,52 +347,46 @@ namespace IOT_SERVER
                 case Command.POST:
                     {
 
+                        Console.WriteLine("POST received");
+
                         switch (message.ARGUMENTS) {
 
+                            case Argument.SELF: {
 
-                            case Argument.ON: {
+                                    switch (message.OPTIONS) {
 
-                                    ClientRecvEventArgs args = new ClientRecvEventArgs();
+                                        case Option.NULLPARAM:
+                                            {
+                                                ClientRecvEventArgs e = new ClientRecvEventArgs();
 
-                                    args.endp = socket.RemoteEndPoint;
+                                                e.endp = socket.RemoteEndPoint;
 
-                                    args.message = "ON";
+                                                e.message = message.ARGUMENTS;
 
-                                    ClientReceiveEvent.Invoke(this, args);
+                                                ClientReceiveEvent.Invoke(this, e);
+
+                                                break;
+                                            }
+
+                                        default: {
+
+
+
+                                                break;
+                                            }
+
+                                    }
 
                                     break;
-
-                                }
-
-
-
-                            case Argument.OFF: {
-
-                                    ClientRecvEventArgs args = new ClientRecvEventArgs();
-
-                                    args.endp = socket.RemoteEndPoint;
-
-                                    args.message = "OFF";
-
-                                    ClientReceiveEvent.Invoke(this, args);
-
-                                    break;
-
                                 }
 
                             default:
+                                {
+                                    Console.WriteLine("Empty post command no arguments");
 
-                                ClientRecvEventArgs e = new ClientRecvEventArgs();
+                                    break;
 
-                                e.endp = socket.RemoteEndPoint;
-
-                                e.message = message.ARGUMENTS;
-
-                                ClientReceiveEvent.Invoke(this, e);
-
-                                break;
-
-
+                                }
                         }
 
                         break;

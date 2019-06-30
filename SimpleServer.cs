@@ -217,7 +217,7 @@ public class SimpleServer : NetworkingServer
         this.message.ARGUMENTS = message;
         this.message.OPTIONS = Option.NULLPARAM;
 
-        SendMessage(key,builder.GetBytes(this.message));
+        SendMessage(key, builder.GetBytes(this.message));
 
         return -1;
     }
@@ -252,7 +252,7 @@ public class SimpleServer : NetworkingServer
 
             MessageBuilder mb = new MessageBuilder();
 
-            try { Server.Send(mb.GetBytes(close)); }
+            try { this.SendMessage(key, mb.GetBytes(close)); }
 
             catch (Exception) { }
 

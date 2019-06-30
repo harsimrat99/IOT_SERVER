@@ -227,23 +227,13 @@ namespace IOT_SERVER
 
                     ClientWorker.CancelAsync();
 
-                    try {
+                    Thread.Sleep(500);
 
-                       myClient.Disconnect(); 
+                    myClient.Disconnect(); 
 
-                       Serial.Close();
+                    Serial.Close();
 
-                    }
-
-                    catch (Exception ex) {
-
-                        AppendText(ex.Message);
-
-                    }
-
-                    finally { State = MODE.NONE; }
-
-                    AppendText("Succesfully Disconnected.");
+                    AppendText("Succesfully disconnected.");
 
                     break;
 
@@ -255,15 +245,13 @@ namespace IOT_SERVER
 
                     Server.Close();                    
 
-                    State = MODE.NONE;
-
                     AppendText("Succesfully closed server.");
+
+                    this.ClientList.Items.Clear();
 
                     break;
 
-            }
-
-            this.ClientList.Items.Clear();
+            }            
 
             State = MODE.NONE;
             
