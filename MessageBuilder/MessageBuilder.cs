@@ -13,7 +13,32 @@ namespace IOT_SERVER
 
             return msg;
 
-        }        
+        }
+
+        public Message CreateMessage(string message)
+        {
+
+            Message msg = new Message("","","");
+
+            int index = message.IndexOf(Message.DEAFULT_DELIM_STRING);
+
+            if (index < 0) throw new System.Exception("Could not create message. Input string corrupted.");
+
+            msg.COMMAND = message.Substring(0, index).ToUpper();
+
+            int prev = index;
+
+            index = message.IndexOf(Message.DEAFULT_DELIM_STRING, index + 1);
+
+            if (index < 0) throw new System.Exception("Could not create message. Input string corrupted.");
+
+            msg.ARGUMENTS = message.Substring(prev + 1, index - prev - 1).ToUpper();
+
+            msg.OPTIONS = message.Substring(index + 1);            
+
+            return msg;
+        }
+
 
         public byte[] GetBytes(Message m)
         {

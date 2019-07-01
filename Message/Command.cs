@@ -8,15 +8,15 @@ namespace IOT_SERVER
 {
     public struct Command
     {
-        public const string SEND = "send";
+        public const string SEND = "SEND";
 
-        public const string PING = "ping";
+        public const string PING = "PING";
 
-        public const string ECHO = "echo";
+        public const string ECHO = "ECHO";
 
-        public const string CLOSE = "close";
+        public const string CLOSE = "CLOSE";
 
-        public const string POST = "post";
+        public const string POST = "POST";
 
     }
 

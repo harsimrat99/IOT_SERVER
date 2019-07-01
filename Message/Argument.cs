@@ -18,5 +18,7 @@ namespace IOT_SERVER
 
         public const string OFF = "OFF";
 
+        public const string SERVER = "SERVER";
+
     }
 }

@@ -1,0 +1,27 @@
+<h1 style="text-align: center;"><strong>Query Reference</strong></h1>
+<div><span style="display: inline !important; float: none; background-color: #ffffff; color: #333333; font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; font-size: 17.5px; font-style: normal; font-variant: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: left; text-decoration: none; text-indent: 0px; text-transform: none; -webkit-text-stroke-width: 0px; white-space: normal; word-spacing: 0px;">Query format: </span><span style="display: inline !important; float: none; background-color: #ffffff; color: #333333; font-family: 'Helvetica Neue',Helvetica,Arial,sans-serif; font-size: 17.5px; font-style: normal; font-variant: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: left; text-decoration: none; text-indent: 0px; text-transform: none; -webkit-text-stroke-width: 0px; white-space: normal; word-spacing: 0px;">COMMAND ARGUMENT PARAMETRES</span></div>
+<div>&nbsp;</div>
+<div><span style="background-color: #ffffff;">Commands include send, post, ping, echo, close.</span></div>
+<div><span style="background-color: #ffffff;">Arguments depend on usage of command.</span></div>
+<div><span style="background-color: #ffffff;">Parametres depend on usage of argument.</span></div>
+<div><span style="background-color: #ffffff;">--- <br /><strong>POST</strong> :</span></div>
+<div><span style="background-color: #ffffff;">&nbsp;Append to the text box of the receiver.</span></div>
+<div><span style="background-color: #ffffff;"><strong>SEND</strong> :</span></div>
+<div><span style="background-color: #ffffff;">&nbsp;Send a message. Arguments are attached and so are options.</span></div>
+<div><span style="background-color: #ffffff;"><strong>PING</strong> :</span></div>
+<div><span style="background-color: #ffffff;">&nbsp;Test the connection.</span></div>
+<div><span style="background-color: #ffffff;"><strong>ECHO</strong>:&nbsp;<br />&nbsp;Get a message echoed back from the specified client.</span></div>
+<div><span style="background-color: #ffffff;"><strong>CLOSE</strong>:</span></div>
+<div><span style="background-color: #ffffff;">&nbsp;Close current connection with the server. Not available on server side.</span></div>
+<div><span style="background-color: #ffffff;">----<br />Arguments for send are<strong> [Client Number]</strong><br />Arguments for ping are <strong>[Client Number]</strong><br />Arguments for post are <strong>[Client Number]</strong><br />Arguments for close are none.<br />Arguments for echo are <strong>[Client Number]</strong></span></div>
+<div><span style="background-color: #ffffff;">---<br />Parametres for commands with<strong> [Client Number]</strong> argument:</span><span style="background-color: #ffffff;"><strong> [Message]</strong><br /></span></div>
+<div><span style="background-color: #ffffff;">---</span></div>
+<div>&nbsp;</div>
+<div style="text-align: left;"><span style="background-color: #ffffff;">Ex. POST 34 "Hello"</span></div>
+<div style="text-align: left;"><span style="background-color: #ffffff;">Ex. SEND 34 "ON"</span></div>
+<div style="text-align: left;"><span style="background-color: #ffffff;">Ex. PING 34 </span></div>
+<div style="text-align: left;"><span style="background-color: #ffffff;">Ex. ECHO 34 "hello"</span></div>
+<div style="text-align: left;"><span style="background-color: #ffffff;">Ex. CLOSE </span></div>
+<div style="text-align: left;"><span style="background-color: #ffffff;">Ex. POST SELF "serialwrite:bytes:101001"</span></div>
+<div style="text-align: left;"><span style="background-color: #ffffff;">Ex. POST SELF "serialwriteline:string:hello"</span></div>
+<div style="text-align: left;"><span style="background-color: #ffffff;">Ex. POST 65 "serialwrite:bytes:1"</span><span style="background-color: #ffffff;"><br /></span></div>

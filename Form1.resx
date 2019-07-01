@@ -123,6 +123,32 @@
   <metadata name="ServerWorker.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
     <value>140, 17</value>
   </metadata>
+  <data name="richTextBox1.Text" xml:space="preserve">
+    <value>Query format: COMMAND ARGUMENT PARAMETRES
+Commands include send, post, ping, echo, close.
+Arguments depend on usage of command.
+Parametres depend on usage of argument.
+--- 
+POST :
+Append to the text box of the receiver.
+SEND : Send a message. Arguments are attached and so are options.
+PING : Test the connection.
+ECHO:  Get a message echoed back from the specified client.
+CLOSE: Close current connection with the server. Not available on server side.
+----
+Arguments for send, post, receive, echo are [Client Number]
+---
+Parametres for commands with [Client Number] argument: [Message]
+---
+Ex. POST 34 "Hello"
+Ex. SEND 34 "ON"
+Ex. PING 34 
+Ex. ECHO 34 "hello"
+Ex. CLOSE 
+Ex. POST SELF "serialwrite:bytes:101001"
+Ex. POST 65 "serialwrite:bytes:1"
+Ex. POST SELF "serialwriteline:string:hello"</value>
+  </data>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>38</value>
   </metadata>

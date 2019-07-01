@@ -18,8 +18,6 @@ namespace IOT_SERVER
          * 
          */
 
-        //private NetworkStream netStream;
-
         [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern int memset(byte[] b1, byte val, int length);
 
@@ -82,7 +80,6 @@ namespace IOT_SERVER
             Init(type, server, port, B_SIZE_DEAFULT);
 
         }
-
 
         protected int Init (ProtoType type, String server, int port, int buffSize) {
 
@@ -208,8 +205,6 @@ namespace IOT_SERVER
 
                 Console.WriteLine(se.ErrorCode);
 
-                throw new SocketException(se.ErrorCode);
-
                 return -1;
 
             }
@@ -236,27 +231,14 @@ namespace IOT_SERVER
             }
 
         }
-
-        public int Write(String msg) {
-
-            Message newMsg = new Message(Command.SEND, msg.Substring(0, 1 + msg.IndexOf("|")), msg.Substring(1+ msg.IndexOf("|")));
-
-            MessageBuilder mb = new MessageBuilder();
-
-            this.Write(mb.GetBytes(newMsg));
-
-            return 1;
-
-
-        }
-
+      
         public int Write(byte[] msg) {
 
             int sentLength = msg.Length;
 
             try {
 
-                if (this._type == ProtoType.TCP) sentLength = socket.Send(msg, SocketFlags.None);
+                if (this._type == ProtoType.TCP) sentLength = socket.Send(msg, sentLength, SocketFlags.None);
 
                 else if (this._type == ProtoType.UDP) {
 
@@ -307,8 +289,6 @@ namespace IOT_SERVER
 
                 Console.WriteLine(se.Message);
 
-                return -1;
-
             }
 
             return sentLength;
@@ -339,6 +319,8 @@ namespace IOT_SERVER
                     {
                         Console.WriteLine("CLOSE received");
 
+
+                        //not a good idea to close the system from an external event that is first invoked internally for the same purpose. What!?
                         ServerDisconnectedEvent.Invoke(this, EventArgs.Empty); ;
 
                         break;
@@ -356,21 +338,19 @@ namespace IOT_SERVER
                                     switch (message.OPTIONS) {
 
                                         case Option.NULLPARAM:
-                                            {
-                                                ClientRecvEventArgs e = new ClientRecvEventArgs();
-
-                                                e.endp = socket.RemoteEndPoint;
-
-                                                e.message = message.ARGUMENTS;
-
-                                                ClientReceiveEvent.Invoke(this, e);
-
+                                            {                                                
                                                 break;
                                             }
 
                                         default: {
 
+                                                ClientRecvEventArgs e = new ClientRecvEventArgs();
 
+                                                e.endp = socket.RemoteEndPoint;
+
+                                                e.message = message.OPTIONS;
+
+                                                ClientReceiveEvent.Invoke(this, e);
 
                                                 break;
                                             }

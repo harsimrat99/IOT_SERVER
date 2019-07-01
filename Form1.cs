@@ -79,6 +79,10 @@ namespace IOT_SERVER
 
                 this.State = MODE.CLIENT;
 
+                msgBox.Enabled = true;
+
+                SendButton.Enabled = true;
+
                 ClientWorker.RunWorkerAsync();
 
             }
@@ -229,9 +233,9 @@ namespace IOT_SERVER
 
                     Thread.Sleep(500);
 
-                    myClient.Disconnect(); 
+                    if (myClient != null) myClient.Disconnect();
 
-                    Serial.Close();
+                    if (Serial != null) Serial.Close();
 
                     AppendText("Succesfully disconnected.");
 
@@ -241,9 +245,9 @@ namespace IOT_SERVER
 
                     ServerWorker.CancelAsync();                    
 
-                    Thread.Sleep(500);                   
+                    Thread.Sleep(500);
 
-                    Server.Close();                    
+                    if (Server != null)  Server.Close();                    
 
                     AppendText("Succesfully closed server.");
 
@@ -267,6 +271,7 @@ namespace IOT_SERVER
 
         private void SendButtonEvent(object sender, EventArgs e)
         {
+            MessageBuilder bd = new MessageBuilder();
 
             String message = "";
 
@@ -284,6 +289,8 @@ namespace IOT_SERVER
 
                     message = msgBox.Text;
 
+                    Console.WriteLine(message);
+
                 });
 
             }
@@ -292,13 +299,20 @@ namespace IOT_SERVER
 
                 case MODE.CLIENT:
 
-                    myClient.Write(message);
+                    Message msg = new Message("","","");
+
+                    try { msg = bd.CreateMessage(message); }
+
+                    catch (Exception) {
+
+                        AppendText("Input query is corrupted. See the help page for valid queries.");
+                    }
+
+                    myClient.Write(bd.GetBytes(msg));
 
                     break;
 
-                case MODE.SERVER:
-
-                    //Server.SendMessage(myEncoder.Encode(Encoding.ASCII.GetBytes(message)));                    
+                case MODE.SERVER:                                  
 
                     break;
             }
@@ -338,7 +352,7 @@ namespace IOT_SERVER
 
             for (; running == true;)
             {
-                Server.Accept();
+               Server.Accept();
 
                Server.GetMessage();
           
@@ -364,7 +378,7 @@ namespace IOT_SERVER
 
         private void Server_MessageReceived(object sender, NetworkingServer.ReceiveMessageEventArgs e)
         {
-            AppendText("Message from:" + e.endp.ToString() + ": " +e.message);
+            AppendText("Message from:" + e.endp.ToString() + ": " + e.message);
         }
 
         private void Server_ConnectionClosed(object sender, NetworkingServer.CloseConnectionEventArgs e)
@@ -421,7 +435,11 @@ namespace IOT_SERVER
 
                 this.State = MODE.SERVER;
 
-                running = true;                
+                running = true;
+
+                msgBox.Enabled = false;
+
+                SendButton.Enabled = false;
 
                 ServerWorker.RunWorkerAsync();
 
@@ -509,8 +527,8 @@ namespace IOT_SERVER
 
         private void TabControl_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (this.State == MODE.CLIENT && this.TabControl.SelectedTab == ClientsTab) {
-                (this.TabControl).SelectedTab = ClientsTab;
+            if ((this.State == (MODE.CLIENT ) || this.State == (MODE.NONE)) && this.TabControl.SelectedTab == ClientsTab) {
+                (this.TabControl).SelectedTab = logPage;
             }
         }
 
@@ -521,19 +539,6 @@ namespace IOT_SERVER
                 Server.RemoveClient(Int32.Parse(ClientList.SelectedItems[i].Text));
 
         }
-
-        private void Button1_Click(object sender, EventArgs e)
-        {
-            for (int i = 0; i < ClientList.SelectedItems.Count; i++)
-
-                Server.SendMessage(Int32.Parse(ClientList.SelectedItems[i].Text), "ON");
-        }
-
-        private void Button2_Click(object sender, EventArgs e)
-        {
-            for (int i = 0; i < ClientList.SelectedItems.Count; i++)
-
-                Server.SendMessage(Int32.Parse(ClientList.SelectedItems[i].Text), "OFF");
-        }
+       
     }
 }

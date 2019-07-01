@@ -7,7 +7,7 @@ namespace IOT_SERVER
         public string COMMAND { get; set; }
         public string ARGUMENTS { get; set; }
         public string OPTIONS { get; set; }
-
+        public const string DEAFULT_DELIM_STRING = "|";
         public const byte DEFAULT_DELIM = 124;
 
         public byte[] DELIMMITER;

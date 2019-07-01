@@ -103,17 +103,7 @@ public class SimpleServer : NetworkingServer
 
     public override void Close() {
 
-        foreach (DictionaryEntry gg in ClientsList)
-
-            if (((Socket)gg.Value) != null)
-
-            {
-
-                ((Socket)gg.Value).Shutdown(SocketShutdown.Both);
-
-                ((Socket)gg.Value).Close();
-
-            }
+        RemoveAllClients();
 
         Server.Close();        
 
@@ -171,7 +161,7 @@ public class SimpleServer : NetworkingServer
                     {
                         int key = Int32.Parse(message.ARGUMENTS);
 
-                        if (ClientsList.Contains(key)) SendMessage(key, Encoding.ASCII.GetBytes(message.OPTIONS));
+                        if (ClientsList.Contains(key)) SendMessage(key, ((ReceiveMessageEventArgs)ClientsToServiced[i]).endp + " : " + (message.OPTIONS));
 
                         break;
                     }
@@ -189,16 +179,45 @@ public class SimpleServer : NetworkingServer
 
                 case Command.POST:
                     {
-                        ((ReceiveMessageEventArgs)ClientsToServiced[i]).message = message.ARGUMENTS;
 
-                        base.OnReceiveMessage(((ReceiveMessageEventArgs)ClientsToServiced[i]));
+                        switch (message.ARGUMENTS) {
+
+
+                            case Argument.NULLARGS:                                
+
+                                break;
+
+                            case Argument.SERVER:
+
+                                ((ReceiveMessageEventArgs)ClientsToServiced[i]).message = message.OPTIONS;
+
+                                base.OnReceiveMessage(((ReceiveMessageEventArgs)ClientsToServiced[i]));
+
+                                break;
+
+                            case Argument.ON:
+
+                                break;
+
+                            case Argument.OFF:
+
+                                break;
+
+                            default:
+
+                                break;
+
+                        }
 
                         break;
+                        //
                     }
 
                 default: {
 
-                        Console.WriteLine("Command not parsed." + message.ToString());                        
+                        ((ReceiveMessageEventArgs)ClientsToServiced[i]).message = "Command not parsed" + message.OPTIONS;
+
+                        base.OnReceiveMessage(((ReceiveMessageEventArgs)ClientsToServiced[i]));
 
                         break;
                     }
@@ -214,8 +233,8 @@ public class SimpleServer : NetworkingServer
     public int SendMessage(int key, string message) {
 
         this.message.COMMAND = Command.POST;
-        this.message.ARGUMENTS = message;
-        this.message.OPTIONS = Option.NULLPARAM;
+        this.message.ARGUMENTS = Argument.SELF;
+        this.message.OPTIONS = message;
 
         SendMessage(key, builder.GetBytes(this.message));
 
@@ -263,5 +282,30 @@ public class SimpleServer : NetworkingServer
 
         base.OnCloseConnection(new CloseConnectionEventArgs { Key = key});
     }
+
+    public void RemoveAllClients()
+    {
+        Message close = new Message(Command.CLOSE, Argument.NULLARGS, Option.NULLPARAM);
+
+        MessageBuilder mb = new MessageBuilder();
+
+        foreach (DictionaryEntry client in ClientsList)
+
+        {
+            try { this.SendMessage(((int)client.Key), mb.GetBytes(close)); }
+
+            catch (Exception) { }
+
+            ((Socket)client.Value).Close();
+
+            base.OnCloseConnection(new CloseConnectionEventArgs { Key = ((int)client.Key) });
+
+        }
+
+        ClientsList.Clear();
+    }
+
 }
+
+
 
