@@ -12,7 +12,7 @@ namespace IOT_SERVER
 
         public const string PING = "PING";
 
-        public const string ECHO = "ECHO";
+        public const string ECHOBACK = "ECHOBACK";
 
         public const string CLOSE = "CLOSE";
 

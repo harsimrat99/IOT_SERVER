@@ -5,9 +5,16 @@ using System.Net;
 using IOT_SERVER;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Timers;
 
 public class SimpleServer : NetworkingServer
-{     
+{
+    private const int DEFAULT_NO_RESPONSE_CLOSE_SEC = 30 * 60;
+
+    private const int DEFAULT_NOT_ACTIVE_TIME_SEC = 7 * 60;
+
+    private const int DEFAULT_CLEAN_INTERVAL = 5 * 60 * 1000;
+
     private Hashtable  ClientsList;
 
     private ArrayList ClientsToServiced = new ArrayList(5);
@@ -16,9 +23,13 @@ public class SimpleServer : NetworkingServer
 
     private object MyLock = new object();
 
+    private Timer Cleaner;
+
     private Message message = new Message("", "", "");
 
     private MessageBuilder builder = new MessageBuilder();
+
+    private DateTime startup = DateTime.Now;
 
     public SimpleServer(int port, int listeners)
 	{
@@ -57,7 +68,7 @@ public class SimpleServer : NetworkingServer
 
             Server.ReceiveTimeout = DEFAULT_TIMEOUT_RECEIVE;
 
-            Server.Listen(Listeners);    
+            Server.Listen(Listeners);            
                        
             recvBuffer = new byte[DEFAULT_BUFFER_SIZE]; ;
 
@@ -68,11 +79,19 @@ public class SimpleServer : NetworkingServer
 
             Console.WriteLine(e.Message);
 
-            return "PROB";
+            return "PROBLEM INITIALISING SERVER";
 
         }
 
         recvBuffer = new byte[DEFAULT_BUFFER_SIZE];
+
+        this.Cleaner = new Timer();
+
+        this.Cleaner.Interval = DEFAULT_CLEAN_INTERVAL;
+
+        this.Cleaner.Enabled = true;
+
+        this.Cleaner.Elapsed += Clean;
 
         return "SUCCESFULLY INITIALISED AT PORT " + Port.ToString();
 
@@ -82,17 +101,30 @@ public class SimpleServer : NetworkingServer
 
         if (Server.Poll(DEFAULT_POLL_MICROS, SelectMode.SelectRead))
         {
-            ++i;
+            ++i;            
 
-            ClientsList.Add(i, Server.Accept());
+            Random r = new Random();
 
-            ((Socket)ClientsList[i]).ReceiveTimeout = DEFAULT_TIMEOUT_RECEIVE;
+            int secret = Math.Abs(r.Next() * i *  (int) (DateTime.Now - startup).TotalSeconds);
+
+            Client c = new Client
+            {
+                lastActiveMillis = DateTime.Now,
+
+                socket = Server.Accept(),
+
+                key = secret
+            };
+
+            ClientsList.Add(secret, c);
+
+            ((Client)ClientsList[secret]).socket.ReceiveTimeout = DEFAULT_TIMEOUT_RECEIVE;
 
             AcceptEventArgs ae = new AcceptEventArgs
             {
-                endp = ((Socket)ClientsList[i]).RemoteEndPoint,
+                endp = ((Client)ClientsList[secret]).socket.RemoteEndPoint,
 
-                Name = i.ToString()
+                Name = secret.ToString()
             };
 
             base.OnAcceptEvent(ae);
@@ -118,12 +150,14 @@ public class SimpleServer : NetworkingServer
             foreach (DictionaryEntry Client in ClientsList)
             {
 
-                if (((Socket)Client.Value).Available > 0)
+                if (((Client)Client.Value).socket.Available > 0)
                 {
+
+                    ((Client)Client.Value).lastActiveMillis = DateTime.Now;
 
                     ReceiveMessageEventArgs args = new ReceiveMessageEventArgs();
 
-                    args.endp = ((Socket)Client.Value).RemoteEndPoint;
+                    args.endp = ((Client)Client.Value).socket.RemoteEndPoint;
 
                     args.key = (int) (Client.Key);
 
@@ -144,14 +178,14 @@ public class SimpleServer : NetworkingServer
 
         if (ClientsToServiced.Count == 0) return;
 
-        int bytesReceived = DEFAULT_BUFFER_SIZE;        
+        int bytesReceived = DEFAULT_BUFFER_SIZE;
 
         for (int i = 0; i < ClientsToServiced.Count; i++)
         {
 
             memset(recvBuffer, 0, bytesReceived);
 
-            bytesReceived = ((Socket)ClientsList[((ReceiveMessageEventArgs)ClientsToServiced[i]).key]).Receive(recvBuffer, recvBuffer.Length, SocketFlags.None);
+            bytesReceived = ((Client)ClientsList[((ReceiveMessageEventArgs)ClientsToServiced[i]).key]).socket.Receive(recvBuffer, recvBuffer.Length, SocketFlags.None);
 
             message = MessageParser.GetMessage(recvBuffer);
 
@@ -168,9 +202,8 @@ public class SimpleServer : NetworkingServer
 
                 case Command.CLOSE:
                     {
-                        ((Socket)ClientsList[((ReceiveMessageEventArgs)ClientsToServiced[i]).key]).Close();
 
-                        ClientsList.Remove(((ReceiveMessageEventArgs)ClientsToServiced[i]).key);
+                        RemoveClient(((ReceiveMessageEventArgs)ClientsToServiced[i]).key);
 
                         base.OnCloseConnection(new CloseConnectionEventArgs { Key = ((ReceiveMessageEventArgs)ClientsToServiced[i]).key });
 
@@ -183,7 +216,7 @@ public class SimpleServer : NetworkingServer
                         switch (message.ARGUMENTS) {
 
 
-                            case Argument.NULLARGS:                                
+                            case Argument.NULLARGS:
 
                                 break;
 
@@ -213,6 +246,40 @@ public class SimpleServer : NetworkingServer
                         //
                     }
 
+                case Command.ECHOBACK: {
+
+                        switch (message.ARGUMENTS)
+                        {
+                            case Argument.SERVER:
+                                {
+                                    switch (message.OPTIONS)
+                                    {
+
+                                        case Option.KEY:
+                                            {
+                                                Message m;
+
+                                                m = builder.CreateMessage(Command.POST, Argument.SELF, ((ReceiveMessageEventArgs)ClientsToServiced[i]).key.ToString());
+
+                                                int key = ((ReceiveMessageEventArgs)ClientsToServiced[i]).key;
+
+                                                SendMessage(key, builder.GetBytes(m));
+
+                                                break;
+                                            }
+
+                                    }
+
+                                    break;
+                                }                                
+
+                        }
+
+
+                        break;
+
+                }
+
                 default: {
 
                         ((ReceiveMessageEventArgs)ClientsToServiced[i]).message = "Command not parsed" + message.OPTIONS;
@@ -220,7 +287,7 @@ public class SimpleServer : NetworkingServer
                         base.OnReceiveMessage(((ReceiveMessageEventArgs)ClientsToServiced[i]));
 
                         break;
-                    }
+                }
             }
 
 
@@ -247,7 +314,7 @@ public class SimpleServer : NetworkingServer
         try
         {
 
-            ((Socket)ClientsList[key]).Send(buff, buff.Length, SocketFlags.None);
+            ((Client)ClientsList[key]).socket.Send(buff, buff.Length, SocketFlags.None);
 
         }
 
@@ -275,7 +342,7 @@ public class SimpleServer : NetworkingServer
 
             catch (Exception) { }
 
-            ((Socket)ClientsList[key]).Close();
+            ((Client)ClientsList[key]).socket.Close();
 
             ClientsList.Remove((int) key);
         }
@@ -296,13 +363,51 @@ public class SimpleServer : NetworkingServer
 
             catch (Exception) { }
 
-            ((Socket)client.Value).Close();
+            ((Client)client.Value).socket.Close();
 
             base.OnCloseConnection(new CloseConnectionEventArgs { Key = ((int)client.Key) });
 
         }
 
         ClientsList.Clear();
+    }
+
+    private void Clean(object s, EventArgs e) {        
+
+        lock (MyLock) {
+
+            foreach (DictionaryEntry value in ClientsList) {
+
+                
+
+                if ( (DateTime.Now - ((Client)value.Value).lastActiveMillis).TotalSeconds > DEFAULT_NO_RESPONSE_CLOSE_SEC) {
+
+                    ClientsToServiced.Add(value.Key);
+
+                }
+
+               else if ((DateTime.Now - ((Client)value.Value).lastActiveMillis).TotalSeconds > DEFAULT_NOT_ACTIVE_TIME_SEC)
+                {
+
+                    ReceiveMessageEventArgs args = new ReceiveMessageEventArgs { key = (int)value.Key, message = "CHANGE_ACTIVE_TO_FALSE" };
+
+                    base.OnReceiveMessage(args);
+
+                }
+
+            }
+        
+
+            for (int i = 0; i < ClientsToServiced.Count; i++) {
+
+                RemoveClient((int)ClientsToServiced[i]);
+
+            }
+
+            ClientsToServiced.Clear();
+
+        }
+
     }
 
 }

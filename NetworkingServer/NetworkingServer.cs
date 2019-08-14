@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace IOT_SERVER
 {
+
     public abstract class NetworkingServer
     {        
         protected const int DEFAULT_LISTENERS = 5;
@@ -87,6 +88,17 @@ namespace IOT_SERVER
 
             MessageReceived.Invoke(this,e);
 
+        }
+
+        protected class Client {
+           
+            public Socket socket;
+
+            public DateTime lastActiveMillis;
+
+            public long key;
+
+           
         }
 
     }

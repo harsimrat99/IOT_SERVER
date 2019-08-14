@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Net;
 using System.Runtime.InteropServices;
+using System.Timers;
 
 namespace IOT_SERVER
-{
+{ 
+
     public class NetworkingClient
     {
         /*
@@ -20,6 +22,8 @@ namespace IOT_SERVER
 
         [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
         private static extern int memset(byte[] b1, byte val, int length);
+
+        private Timer keepAliveTimer;
 
         private IPEndPoint currentEndpoint;
 
@@ -51,6 +55,8 @@ namespace IOT_SERVER
 
         public const int DEFAULT_RETRIES = 3;
 
+        public const int DEFAULT_KEEPALIVE_MILLIS = 900 * 1000;
+
         public event EventHandler <ClientRecvEventArgs> ClientReceiveEvent;
 
         public event EventHandler ServerDisconnectedEvent;
@@ -81,7 +87,7 @@ namespace IOT_SERVER
 
         }
 
-        protected int Init (ProtoType type, String server, int port, int buffSize) {
+        protected int Init(ProtoType type, String server, int port, int buffSize) {
 
             this.port = port;
 
@@ -107,17 +113,17 @@ namespace IOT_SERVER
 
                 case ProtoType.TCP:
 
-                    socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);                    
+                    socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
                     break;
 
                 case ProtoType.UDP:
 
-                    socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);                     
+                    socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
-                    break;                      
+                    break;
 
-            }                        
+            }
 
             socket.Blocking = true;
 
@@ -131,7 +137,21 @@ namespace IOT_SERVER
 
             message = new Message("", "", "");
 
+            this.keepAliveTimer = new Timer();
+
+            this.keepAliveTimer.Interval = DEFAULT_KEEPALIVE_MILLIS;
+
+            this.keepAliveTimer.Enabled = true;
+
+            this.keepAliveTimer.Elapsed += KeepAliveTimer_Elapsed;
+
             return 1;
+
+        }
+
+        private void KeepAliveTimer_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            this.Write(new byte[] { 1, 0, 1 });             
 
         }
 
@@ -210,6 +230,8 @@ namespace IOT_SERVER
             }
 
             Console.WriteLine("Socket closed succesfully.");
+
+            this.keepAliveTimer.Enabled = false;
 
             return 1;
 
@@ -318,7 +340,6 @@ namespace IOT_SERVER
                 case Command.CLOSE:
                     {
                         Console.WriteLine("CLOSE received");
-
 
                         //not a good idea to close the system from an external event that is first invoked internally for the same purpose. What!?
                         ServerDisconnectedEvent.Invoke(this, EventArgs.Empty); ;

@@ -12,5 +12,7 @@ namespace IOT_SERVER
         private string Parametres;
 
         public const string NULLPARAM = "NULL";
+
+        public const string KEY = "KEY";
     }
 }

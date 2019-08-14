@@ -1,16 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using IOT.Forms;
 using Microsoft.VisualBasic;
-using System.Net;
 
 namespace IOT_SERVER
 {
@@ -27,12 +21,17 @@ namespace IOT_SERVER
 
         object  myLock = new object();
 
-        Boolean running = true;
+        MySqlClient sqlClient;
+
+        bool running = true;
+
         public enum MODE {SERVER, CLIENT, NONE};
 
         public int bfrLen = Encoder.DEFAULT_LENGTH_BUFFER;
 
-        private MODE State;        
+        private MODE State;
+
+        private DatabaseForm database;
 
         public IOT()
         {
@@ -50,7 +49,7 @@ namespace IOT_SERVER
 
             portBox.SelectedIndex = 0;
 
-            addressBox.SelectedIndex = 1;
+            addressBox.SelectedIndex = 0;
 
             comPortBox.SelectedIndex = 0;
 
@@ -61,6 +60,11 @@ namespace IOT_SERVER
             button4.Enabled = false;
 
             State = MODE.NONE;
+
+            database = new DatabaseForm();
+
+           
+
         }
 
         private void StartClientProcessEvent(object sender, EventArgs e)
@@ -223,6 +227,8 @@ namespace IOT_SERVER
 
         private void StopButtonEvent(object sender, EventArgs e)
         {
+          
+
             running = false;
 
             switch (State) {
@@ -253,9 +259,13 @@ namespace IOT_SERVER
 
                     this.ClientList.Items.Clear();
 
+                    if (!(sqlClient == null)) sqlClient.Close();
+
                     break;
 
-            }            
+            }
+
+            database.Enable();
 
             State = MODE.NONE;
             
@@ -328,7 +338,6 @@ namespace IOT_SERVER
         private void ServerWorkerEvent(object sender, DoWorkEventArgs e)
         {
 
-
             if (!Int32.TryParse(GetComboSelectedText(portBox).Trim(), out int portNumber))
             {
 
@@ -354,8 +363,8 @@ namespace IOT_SERVER
             {
                Server.Accept();
 
-               Server.GetMessage();
-          
+               Server.GetMessage();                         
+
                 if (s != null)
                 {
 
@@ -378,7 +387,28 @@ namespace IOT_SERVER
 
         private void Server_MessageReceived(object sender, NetworkingServer.ReceiveMessageEventArgs e)
         {
-            AppendText("Message from:" + e.endp.ToString() + ": " + e.message);
+            
+            this.Invoke((MethodInvoker)delegate {
+
+                int idx = ClientList.Items.IndexOfKey(e.key.ToString());
+
+                ClientList.Items[idx].SubItems[4].Text = e.message;
+
+            });
+
+            if (e.message == "CHANGE_ACTIVE_TO_FALSE")
+            {
+
+                if (sqlClient!= null) sqlClient.EditActive(e.key, false);
+
+            }
+
+            else
+            {
+                if (sqlClient != null) this.Invoke((MethodInvoker)delegate { sqlClient.Edit(e.key, e.message); });
+
+                AppendText("Message from:" + e.endp.ToString() + ": " + e.message);
+            }
         }
 
         private void Server_ConnectionClosed(object sender, NetworkingServer.CloseConnectionEventArgs e)
@@ -387,7 +417,9 @@ namespace IOT_SERVER
             this.Invoke((MethodInvoker)delegate 
             
             {
-                ClientList.Items.RemoveByKey(e.Key.ToString());                
+                ClientList.Items.RemoveByKey(e.Key.ToString());
+
+                if (sqlClient != null) sqlClient.DeleteByKey(e.Key);
                 
             });
 
@@ -406,17 +438,32 @@ namespace IOT_SERVER
 
             int index = remote.IndexOf(":");
 
+            int port = Int32.Parse(remote.Substring(index + 1));
+
+            int key = Int32.Parse(e.Name);
+
             item.SubItems.Add(remote.Substring(0, index));
 
             item.SubItems.Add(remote.Substring(index + 1));
 
             item.SubItems.Add(DateTime.Now.ToString());
 
+            item.SubItems.Add("N/A");
+
+            if (sqlClient != null)
+            {
+                _ = sqlClient.InsertNew(remote.Substring(0, index), port, true, key);
+            }
+
             try
             {
                 AddToList(item);
+                
             }
-            catch (Exception ) {                
+            catch (Exception ex) {
+
+                Console.WriteLine(ex.Message);
+
             }
 
         }
@@ -442,6 +489,16 @@ namespace IOT_SERVER
                 SendButton.Enabled = false;
 
                 ServerWorker.RunWorkerAsync();
+
+                if (database.isDatabseEnabled) {
+
+                    sqlClient = new MySqlClient("sql9.freesqldatabase.com", "sql9296399", "sql9296399", "dgfrKGUJ1h") { CurrentTable = "`Active Clients`" };
+
+                    database.Disable();
+
+                }
+
+                else sqlClient = null;
 
                 pnl.BackColor = Color.Green;
 
@@ -539,6 +596,16 @@ namespace IOT_SERVER
                 Server.RemoveClient(Int32.Parse(ClientList.SelectedItems[i].Text));
 
         }
-       
+
+        private void DbConn_Click(object sender, EventArgs e)
+        {
+            if (database != null) database.Show();
+
+        }
+
+        private void Pnl_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }
