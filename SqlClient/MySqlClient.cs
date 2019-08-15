@@ -1,4 +1,5 @@
 ﻿using MySql.Data.MySqlClient;
+using System;
 using System.Data;
 
 namespace IOT_SERVER
@@ -6,6 +7,8 @@ namespace IOT_SERVER
     public class MySqlClient
 
     {
+        private const string CONNECTION_OK = "OK";
+
         private MySqlConnection Connection;
 
         private MySqlDataAdapter adapter;        
@@ -31,13 +34,11 @@ namespace IOT_SERVER
 
             this.UID = userId;
 
-            this.PASSWORD = password;
-
-            Initiliase();
+            this.PASSWORD = password;            
 
         }
 
-        private void Initiliase()
+        public string Initiliase()
         {
 
             MySqlConnectionStringBuilder builder = new MySqlConnectionStringBuilder();
@@ -58,6 +59,21 @@ namespace IOT_SERVER
 
             command.Connection = Connection;
 
+            try
+            {
+                Connection.Open();
+            }
+            catch (MySqlException ex)
+            {
+
+                return ex.Message;
+
+            }
+
+            Connection.Close();
+
+            return Codes.OK;
+
         }
 
         public DataSet GetData()
@@ -65,9 +81,7 @@ namespace IOT_SERVER
 
             DataSet ds = new DataSet();
 
-            string connector = string.Format("USE {0}; SELECT * FROM {1};", this.DATABASE, this.CurrentTable);
-
-            Connection.Open();
+            string connector = string.Format("USE {0}; SELECT * FROM {1};", this.DATABASE, this.CurrentTable);           
 
             if (!(Connection.State == ConnectionState.Open)) return null;
 
@@ -140,6 +154,12 @@ namespace IOT_SERVER
         public void Close() {
 
             Connection.Close();
+
+        }
+
+        public  class Codes
+        {
+            public const string OK = CONNECTION_OK;
 
         }
 

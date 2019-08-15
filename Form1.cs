@@ -479,6 +479,32 @@ namespace IOT_SERVER
             }
 
             else {                
+                              
+
+                if (database.isDatabseEnabled) {
+
+                    sqlClient = new MySqlClient(database.Server, database.DatabaseName, database.Username, database.Password) { CurrentTable = database.DefaultTable };
+
+                    string answer;
+
+                    if ((answer = sqlClient.Initiliase()) != MySqlClient.Codes.OK) {
+
+                        MessageBox.Show(answer, "Database Connection Unsuccesful", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                        AppendText("Could not start server. Please check database parametres.");
+
+                        return;
+                    }
+
+                    database.Disable();
+
+                }
+
+                else sqlClient = null;
+
+                ServerWorker.RunWorkerAsync();
+
+                pnl.BackColor = Color.Green;
 
                 this.State = MODE.SERVER;
 
@@ -487,20 +513,6 @@ namespace IOT_SERVER
                 msgBox.Enabled = false;
 
                 SendButton.Enabled = false;
-
-                ServerWorker.RunWorkerAsync();
-
-                if (database.isDatabseEnabled) {
-
-                    sqlClient = new MySqlClient("sql9.freesqldatabase.com", "sql9296399", "sql9296399", "dgfrKGUJ1h") { CurrentTable = "`Active Clients`" };
-
-                    database.Disable();
-
-                }
-
-                else sqlClient = null;
-
-                pnl.BackColor = Color.Green;
 
             }
 
@@ -602,10 +614,6 @@ namespace IOT_SERVER
             if (database != null) database.Show();
 
         }
-
-        private void Pnl_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
+        
     }
 }

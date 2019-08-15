@@ -37,9 +37,11 @@
             this.serverName = new System.Windows.Forms.TextBox();
             this.userName = new System.Windows.Forms.TextBox();
             this.passwordBox = new System.Windows.Forms.TextBox();
+            this.btnSave = new System.Windows.Forms.Button();
+            this.dbNameBox = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
             this.tableBox = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.btnSave = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // dbEnabledCheckBox
@@ -83,6 +85,23 @@
             resources.ApplyResources(this.passwordBox, "passwordBox");
             this.passwordBox.Name = "passwordBox";
             // 
+            // btnSave
+            // 
+            resources.ApplyResources(this.btnSave, "btnSave");
+            this.btnSave.Name = "btnSave";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.BtnSave_Click_1);
+            // 
+            // dbNameBox
+            // 
+            resources.ApplyResources(this.dbNameBox, "dbNameBox");
+            this.dbNameBox.Name = "dbNameBox";
+            // 
+            // label6
+            // 
+            resources.ApplyResources(this.label6, "label6");
+            this.label6.Name = "label6";
+            // 
             // tableBox
             // 
             resources.ApplyResources(this.tableBox, "tableBox");
@@ -93,13 +112,6 @@
             resources.ApplyResources(this.label5, "label5");
             this.label5.Name = "label5";
             // 
-            // btnSave
-            // 
-            resources.ApplyResources(this.btnSave, "btnSave");
-            this.btnSave.Name = "btnSave";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.BtnSave_Click_1);
-            // 
             // DatabaseForm
             // 
             resources.ApplyResources(this, "$this");
@@ -107,9 +119,11 @@
             this.AutoValidate = System.Windows.Forms.AutoValidate.Disable;
             this.BackColor = System.Drawing.SystemColors.Control;
             this.ControlBox = false;
-            this.Controls.Add(this.btnSave);
             this.Controls.Add(this.tableBox);
             this.Controls.Add(this.label5);
+            this.Controls.Add(this.dbNameBox);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.btnSave);
             this.Controls.Add(this.passwordBox);
             this.Controls.Add(this.userName);
             this.Controls.Add(this.serverName);
@@ -137,8 +151,10 @@
         private System.Windows.Forms.TextBox serverName;
         private System.Windows.Forms.TextBox userName;
         private System.Windows.Forms.TextBox passwordBox;
+        private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.TextBox dbNameBox;
+        private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox tableBox;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Button btnSave;
     }
 }

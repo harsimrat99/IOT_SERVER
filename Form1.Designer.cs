@@ -145,7 +145,6 @@ namespace IOT_SERVER
             this.pnl.Name = "pnl";
             this.pnl.Size = new System.Drawing.Size(94, 47);
             this.pnl.TabIndex = 9;
-            this.pnl.Paint += new System.Windows.Forms.PaintEventHandler(this.Pnl_Paint);
             // 
             // label2
             // 

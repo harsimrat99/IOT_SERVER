@@ -16,7 +16,8 @@ namespace IOT.Forms
     {
 
         public DatabaseForm()
-        {
+        {           
+
             InitializeComponent();
 
 
@@ -35,8 +36,9 @@ namespace IOT.Forms
 
             serverName.Enabled = false;
 
-            tableBox.Enabled = false;
+            this.tableBox.Enabled = false ;
 
+            dbNameBox.Enabled = false;
         }
 
         public void Enable()
@@ -50,7 +52,9 @@ namespace IOT.Forms
 
             serverName.Enabled = true;
 
-            tableBox.Enabled = true;
+            dbNameBox.Enabled = true;
+
+            this.tableBox.Enabled = true;
 
         }
 
@@ -60,7 +64,10 @@ namespace IOT.Forms
 
         public  string Server => this.serverName.Text;
 
+        public string DatabaseName => this.dbNameBox.Text;
+
         public string DefaultTable => this.tableBox.Text;
+        
 
         private void BtnSave_Click_1(object sender, EventArgs e)
         {
