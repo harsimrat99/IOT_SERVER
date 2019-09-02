@@ -11,7 +11,7 @@ namespace IOT_SERVER
     public partial class IOT : Form
     {        
 
-        NetworkingClient myClient;
+        NetworkingClient myClient, azClient = null;
 
         SimpleServer Server;
 
@@ -32,6 +32,8 @@ namespace IOT_SERVER
         private MODE State;
 
         private DatabaseForm database;
+
+        private MessageBuilder builder = new MessageBuilder();
 
         public IOT()
         {
@@ -131,8 +133,7 @@ namespace IOT_SERVER
             Serial = new SimpleSerial(GetComboSelectedText(comPortBox), Int32.Parse(GetComboSelectedText(baudRateBox)), true);
 
             Message SerialMessenger = new Message(Command.POST,"",Option.NULLPARAM);
-
-            MessageBuilder builder = new MessageBuilder();
+            
 
             Serial.DataReady += delegate
             {
@@ -141,11 +142,20 @@ namespace IOT_SERVER
 
                 SerialMessenger.ARGUMENTS = data;
 
-                myClient.Write(myEncoder.Encode(builder.GetBytes(SerialMessenger)));
+                try
+                {
+                    myClient.Write(myEncoder.Encode(builder.GetBytes(SerialMessenger)));
+                }
 
-                textBox.AppendText(data);
+                catch (Exception E) {
 
-                if (autoScroll.Checked) textBox.ScrollToCaret();
+                    Console.WriteLine(E.Message);
+
+                }
+
+                if (serBox.Checked) serText.AppendText(data);
+
+                if (autoScroll.Checked) serText.ScrollToCaret();
 
             };
 
@@ -197,9 +207,19 @@ namespace IOT_SERVER
         {
             AppendText("Message  from:" + e.endp.ToString() + " : " + e.message);
 
-            if (e.message == "ON") Serial.WriteBytes(new byte[] { 1 });
+            String args = "";
 
-            else if (e.message == "OFF") Serial.WriteBytes(new byte[] { 0 });
+            if (e.message.Contains("=")) {
+
+                int idx = e.message.IndexOf("=");
+
+                args = e.message.Substring(idx + 1);
+
+            }
+
+            if (args == "ON") Serial.WriteBytes(new byte[] { 1 });
+
+            else if (args == "OFF") Serial.WriteBytes(new byte[] { 0 });
 
         }
 
@@ -275,7 +295,9 @@ namespace IOT_SERVER
 
         private void Clear_Click(object sender, EventArgs e)
         {
-            textBox.Clear();            
+            if (TabControl.SelectedTab.Name == serLogTab.Name) serText.Clear();
+
+            else if (TabControl.SelectedTab.Name == logPage.Name) textBox.Clear();
 
         }
 
@@ -614,6 +636,107 @@ namespace IOT_SERVER
             if (database != null) database.Show();
 
         }
-        
+
+        private void ConDeviceBtn_Click(object sender, EventArgs e)
+        {
+
+            if (azClient == null) {
+
+                conDeviceBtn.Enabled = false;
+
+                ThreadPool.QueueUserWorkItem(azConnect);
+            }
+            
+
+        }
+
+        private void DisconBtn_Click(object sender, EventArgs e)
+        {
+            if (azClient != null) {
+
+                azClient.Disconnect();
+
+                azClient = null;
+
+                this.Invoke((MethodInvoker)delegate {
+
+                    AppendText("Disconnected from Azure device.");
+
+                    lblRemoteNotify.Text = "";
+
+
+                });
+
+                conDeviceBtn.Enabled = true;
+            }
+        }
+
+        private void SetActionBtn_Click(object sender, EventArgs e)
+        {
+            ThreadPool.QueueUserWorkItem(azSend);
+        }
+
+        private void azSend(object s) {
+
+            if (azClient == null) return;
+
+            Message m = new Message("SET", "ON", "");
+
+            string x = "";
+
+            this.Invoke((MethodInvoker)delegate {
+
+                x = OnBox.Text;
+
+
+            });
+
+            m.OPTIONS = x;            
+
+            azClient.Write(builder.GetBytes(m));
+
+        }
+
+        private void azConnect(object state) {
+
+            azClient = new NetworkingClient(NetworkingClient.ProtoType.TCP, ipBox.Text, 15000);
+
+            azClient.Timeout = 500;
+
+            if (azClient.Connect() == 1)
+            {
+                byte[] rec = azClient.ReadRaw();
+
+               
+                this.Invoke((MethodInvoker)delegate {
+
+                    AppendText("Connected to Azure device.");
+
+                    lblRemoteNotify.Text = "Connected @ " + ipBox.Text;
+
+                    keyBox.Text = System.Text.ASCIIEncoding.ASCII.GetString(rec);
+
+                });
+
+               
+                
+            }
+
+            else {
+
+                this.Invoke((MethodInvoker) delegate  {
+
+                    AppendText("Could not connect to Azure device.");
+
+                    lblRemoteNotify.Text = "Error"; ;
+
+
+                });
+
+            }
+          
+
+        }
+
     }
 }

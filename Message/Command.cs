@@ -18,6 +18,8 @@ namespace IOT_SERVER
 
         public const string POST = "POST";
 
+        public const string SET = "SET";
+
     }
 
 }

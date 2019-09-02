@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.421
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29020.237
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IOT_SERVER", "IOT_SERVER.csproj", "{9AF5F8AD-078E-4C1A-B233-638068275202}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IOT_SERVERTests", "..\IOT_SERVERTests\IOT_SERVERTests.csproj", "{3ACF0E32-AD73-449E-9245-5A63D190B497}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +15,6 @@ Global
 		{9AF5F8AD-078E-4C1A-B233-638068275202}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9AF5F8AD-078E-4C1A-B233-638068275202}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9AF5F8AD-078E-4C1A-B233-638068275202}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3ACF0E32-AD73-449E-9245-5A63D190B497}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3ACF0E32-AD73-449E-9245-5A63D190B497}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3ACF0E32-AD73-449E-9245-5A63D190B497}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3ACF0E32-AD73-449E-9245-5A63D190B497}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

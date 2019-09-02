@@ -195,7 +195,7 @@ public class SimpleServer : NetworkingServer
                     {
                         int key = Int32.Parse(message.ARGUMENTS);
 
-                        if (ClientsList.Contains(key)) SendMessage(key, ((ReceiveMessageEventArgs)ClientsToServiced[i]).endp + " : " + (message.OPTIONS));
+                        if (ClientsList.Contains(key)) SendMessage(key, ((ReceiveMessageEventArgs)ClientsToServiced[i]).endp + "=" + (message.OPTIONS));
 
                         break;
                     }

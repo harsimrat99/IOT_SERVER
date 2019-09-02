@@ -405,6 +405,15 @@ namespace IOT_SERVER
 
             return bytesReceived;
         }
-        
+
+        public byte[] ReadRaw() {                        
+
+            byte[] rec = new byte[100];
+
+            bytesReceived = socket.Receive(rec, 100, SocketFlags.None);
+
+            return rec;
+
+        }
     }
 }

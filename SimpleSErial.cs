@@ -73,7 +73,11 @@ public class SimpleSerial
     {
         available = Serial.BytesToRead;
 
-        read = Serial.ReadLine();
+        try { read = Serial.ReadLine(); }
+
+        catch (Exception ex) {
+            Console.WriteLine(ex.Message);
+        }
 
         SimpleSerialArgs s = new SimpleSerialArgs();
 
@@ -142,7 +146,7 @@ public class SimpleSerial
     }
 
     public void Close() {
-        Serial.Close();        
+        Serial.Close();         
     }
 
 

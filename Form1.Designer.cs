@@ -78,10 +78,36 @@ namespace IOT_SERVER
             this.logPage = new System.Windows.Forms.TabPage();
             this.textBox = new System.Windows.Forms.RichTextBox();
             this.TabControl = new System.Windows.Forms.TabControl();
+            this.RemoteTab = new System.Windows.Forms.TabPage();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.lblRemoteNotify = new System.Windows.Forms.Label();
+            this.animBar = new System.Windows.Forms.ProgressBar();
+            this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.disconBtn = new System.Windows.Forms.Button();
+            this.SetActionBtn = new System.Windows.Forms.Button();
+            this.OFFBox = new System.Windows.Forms.TextBox();
+            this.OnBox = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.keyBox = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.conDeviceBtn = new System.Windows.Forms.Button();
+            this.ipBox = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.serLogTab = new System.Windows.Forms.TabPage();
+            this.serText = new System.Windows.Forms.RichTextBox();
+            this.serBox = new System.Windows.Forms.CheckBox();
             this.menuStrip1.SuspendLayout();
             this.ClientsTab.SuspendLayout();
             this.logPage.SuspendLayout();
             this.TabControl.SuspendLayout();
+            this.RemoteTab.SuspendLayout();
+            this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.serLogTab.SuspendLayout();
             this.SuspendLayout();
             // 
             // StartClientButton
@@ -141,9 +167,9 @@ namespace IOT_SERVER
             // pnl
             // 
             this.pnl.BackColor = System.Drawing.Color.Red;
-            this.pnl.Location = new System.Drawing.Point(182, 445);
+            this.pnl.Location = new System.Drawing.Point(187, 445);
             this.pnl.Name = "pnl";
-            this.pnl.Size = new System.Drawing.Size(94, 47);
+            this.pnl.Size = new System.Drawing.Size(95, 43);
             this.pnl.TabIndex = 9;
             // 
             // label2
@@ -334,7 +360,7 @@ namespace IOT_SERVER
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
-            this.menuStrip1.Size = new System.Drawing.Size(768, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(771, 24);
             this.menuStrip1.TabIndex = 31;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -503,18 +529,233 @@ namespace IOT_SERVER
             // 
             this.TabControl.Controls.Add(this.logPage);
             this.TabControl.Controls.Add(this.ClientsTab);
+            this.TabControl.Controls.Add(this.RemoteTab);
+            this.TabControl.Controls.Add(this.serLogTab);
             this.TabControl.Location = new System.Drawing.Point(12, 27);
             this.TabControl.Name = "TabControl";
-            this.TabControl.SelectedIndex = 0;
+            this.TabControl.SelectedIndex = 1;
             this.TabControl.Size = new System.Drawing.Size(583, 412);
             this.TabControl.TabIndex = 30;
             this.TabControl.SelectedIndexChanged += new System.EventHandler(this.TabControl_SelectedIndexChanged);
+            // 
+            // RemoteTab
+            // 
+            this.RemoteTab.Controls.Add(this.panel1);
+            this.RemoteTab.Controls.Add(this.pictureBox2);
+            this.RemoteTab.Controls.Add(this.pictureBox1);
+            this.RemoteTab.Controls.Add(this.disconBtn);
+            this.RemoteTab.Controls.Add(this.SetActionBtn);
+            this.RemoteTab.Controls.Add(this.OFFBox);
+            this.RemoteTab.Controls.Add(this.OnBox);
+            this.RemoteTab.Controls.Add(this.label11);
+            this.RemoteTab.Controls.Add(this.label10);
+            this.RemoteTab.Controls.Add(this.keyBox);
+            this.RemoteTab.Controls.Add(this.label9);
+            this.RemoteTab.Controls.Add(this.conDeviceBtn);
+            this.RemoteTab.Controls.Add(this.ipBox);
+            this.RemoteTab.Controls.Add(this.label8);
+            this.RemoteTab.Controls.Add(this.label7);
+            this.RemoteTab.Location = new System.Drawing.Point(4, 22);
+            this.RemoteTab.Name = "RemoteTab";
+            this.RemoteTab.Padding = new System.Windows.Forms.Padding(3);
+            this.RemoteTab.Size = new System.Drawing.Size(575, 386);
+            this.RemoteTab.TabIndex = 2;
+            this.RemoteTab.Text = "Remote Control";
+            this.RemoteTab.UseVisualStyleBackColor = true;
+            // 
+            // panel1
+            // 
+            this.panel1.BackColor = System.Drawing.Color.LightGray;
+            this.panel1.Controls.Add(this.lblRemoteNotify);
+            this.panel1.Controls.Add(this.animBar);
+            this.panel1.Location = new System.Drawing.Point(0, 362);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(575, 24);
+            this.panel1.TabIndex = 11;
+            // 
+            // lblRemoteNotify
+            // 
+            this.lblRemoteNotify.AutoSize = true;
+            this.lblRemoteNotify.Location = new System.Drawing.Point(9, 3);
+            this.lblRemoteNotify.Name = "lblRemoteNotify";
+            this.lblRemoteNotify.Size = new System.Drawing.Size(160, 13);
+            this.lblRemoteNotify.TabIndex = 17;
+            this.lblRemoteNotify.Text = "Remote IoT Device Connection ";
+            // 
+            // animBar
+            // 
+            this.animBar.BackColor = System.Drawing.Color.LightSalmon;
+            this.animBar.ForeColor = System.Drawing.SystemColors.Desktop;
+            this.animBar.Location = new System.Drawing.Point(485, 3);
+            this.animBar.Name = "animBar";
+            this.animBar.Size = new System.Drawing.Size(87, 17);
+            this.animBar.TabIndex = 0;
+            // 
+            // pictureBox2
+            // 
+            this.pictureBox2.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox2.BackgroundImage")));
+            this.pictureBox2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.pictureBox2.Location = new System.Drawing.Point(410, 119);
+            this.pictureBox2.Name = "pictureBox2";
+            this.pictureBox2.Size = new System.Drawing.Size(144, 249);
+            this.pictureBox2.TabIndex = 16;
+            this.pictureBox2.TabStop = false;
+            // 
+            // pictureBox1
+            // 
+            this.pictureBox1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.BackgroundImage")));
+            this.pictureBox1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.pictureBox1.InitialImage = ((System.Drawing.Image)(resources.GetObject("pictureBox1.InitialImage")));
+            this.pictureBox1.Location = new System.Drawing.Point(12, 308);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(157, 48);
+            this.pictureBox1.TabIndex = 15;
+            this.pictureBox1.TabStop = false;
+            // 
+            // disconBtn
+            // 
+            this.disconBtn.FlatAppearance.BorderColor = System.Drawing.Color.Red;
+            this.disconBtn.Location = new System.Drawing.Point(105, 79);
+            this.disconBtn.Name = "disconBtn";
+            this.disconBtn.Size = new System.Drawing.Size(75, 23);
+            this.disconBtn.TabIndex = 12;
+            this.disconBtn.Text = "Cancel";
+            this.disconBtn.UseVisualStyleBackColor = true;
+            this.disconBtn.Click += new System.EventHandler(this.DisconBtn_Click);
+            // 
+            // SetActionBtn
+            // 
+            this.SetActionBtn.FlatAppearance.BorderColor = System.Drawing.Color.Red;
+            this.SetActionBtn.Location = new System.Drawing.Point(24, 187);
+            this.SetActionBtn.Name = "SetActionBtn";
+            this.SetActionBtn.Size = new System.Drawing.Size(75, 23);
+            this.SetActionBtn.TabIndex = 10;
+            this.SetActionBtn.Text = "Set";
+            this.SetActionBtn.UseVisualStyleBackColor = true;
+            this.SetActionBtn.Click += new System.EventHandler(this.SetActionBtn_Click);
+            // 
+            // OFFBox
+            // 
+            this.OFFBox.Location = new System.Drawing.Point(81, 155);
+            this.OFFBox.Name = "OFFBox";
+            this.OFFBox.Size = new System.Drawing.Size(100, 20);
+            this.OFFBox.TabIndex = 9;
+            // 
+            // OnBox
+            // 
+            this.OnBox.Location = new System.Drawing.Point(81, 125);
+            this.OnBox.Name = "OnBox";
+            this.OnBox.Size = new System.Drawing.Size(100, 20);
+            this.OnBox.TabIndex = 8;
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(21, 162);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(54, 13);
+            this.label11.TabIndex = 7;
+            this.label11.Text = "Off Action\r\n";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(21, 128);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(54, 13);
+            this.label10.TabIndex = 6;
+            this.label10.Text = "On Action\r\n";
+            // 
+            // keyBox
+            // 
+            this.keyBox.Location = new System.Drawing.Point(451, 47);
+            this.keyBox.Name = "keyBox";
+            this.keyBox.ReadOnly = true;
+            this.keyBox.Size = new System.Drawing.Size(100, 20);
+            this.keyBox.TabIndex = 5;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(377, 50);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(46, 13);
+            this.label9.TabIndex = 4;
+            this.label9.Text = "IOT Key";
+            // 
+            // conDeviceBtn
+            // 
+            this.conDeviceBtn.FlatAppearance.BorderColor = System.Drawing.Color.Red;
+            this.conDeviceBtn.Location = new System.Drawing.Point(24, 79);
+            this.conDeviceBtn.Name = "conDeviceBtn";
+            this.conDeviceBtn.Size = new System.Drawing.Size(75, 23);
+            this.conDeviceBtn.TabIndex = 3;
+            this.conDeviceBtn.Text = "Connect";
+            this.conDeviceBtn.UseVisualStyleBackColor = true;
+            this.conDeviceBtn.Click += new System.EventHandler(this.ConDeviceBtn_Click);
+            // 
+            // ipBox
+            // 
+            this.ipBox.Location = new System.Drawing.Point(81, 47);
+            this.ipBox.Name = "ipBox";
+            this.ipBox.Size = new System.Drawing.Size(100, 20);
+            this.ipBox.TabIndex = 2;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(21, 50);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(54, 13);
+            this.label8.TabIndex = 1;
+            this.label8.Text = "Device IP";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.ForeColor = System.Drawing.SystemColors.MenuHighlight;
+            this.label7.Location = new System.Drawing.Point(7, 9);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(195, 26);
+            this.label7.TabIndex = 0;
+            this.label7.Text = "Device Connection";
+            // 
+            // serLogTab
+            // 
+            this.serLogTab.Controls.Add(this.serText);
+            this.serLogTab.Location = new System.Drawing.Point(4, 22);
+            this.serLogTab.Name = "serLogTab";
+            this.serLogTab.Padding = new System.Windows.Forms.Padding(3);
+            this.serLogTab.Size = new System.Drawing.Size(575, 386);
+            this.serLogTab.TabIndex = 3;
+            this.serLogTab.Text = "Serial";
+            this.serLogTab.UseVisualStyleBackColor = true;
+            // 
+            // serText
+            // 
+            this.serText.Location = new System.Drawing.Point(3, 3);
+            this.serText.Name = "serText";
+            this.serText.Size = new System.Drawing.Size(569, 383);
+            this.serText.TabIndex = 0;
+            this.serText.Text = "";
+            // 
+            // serBox
+            // 
+            this.serBox.AutoSize = true;
+            this.serBox.Location = new System.Drawing.Point(501, 472);
+            this.serBox.Name = "serBox";
+            this.serBox.Size = new System.Drawing.Size(73, 17);
+            this.serBox.TabIndex = 32;
+            this.serBox.Text = "Log Serial";
+            this.serBox.UseVisualStyleBackColor = true;
             // 
             // IOT
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(768, 500);
+            this.ClientSize = new System.Drawing.Size(771, 500);
+            this.Controls.Add(this.serBox);
             this.Controls.Add(this.TabControl);
             this.Controls.Add(this.autoScroll);
             this.Controls.Add(this.baudRateBox);
@@ -522,7 +763,6 @@ namespace IOT_SERVER
             this.Controls.Add(this.bufferLengthBox);
             this.Controls.Add(this.addressBox);
             this.Controls.Add(this.portBox);
-            this.Controls.Add(this.StartServerButton);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label5);
@@ -539,11 +779,12 @@ namespace IOT_SERVER
             this.Controls.Add(this.StopButton);
             this.Controls.Add(this.StartClientButton);
             this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.StartServerButton);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(800, 800);
-            this.MinimumSize = new System.Drawing.Size(500, 450);
+            this.MaximumSize = new System.Drawing.Size(787, 539);
+            this.MinimumSize = new System.Drawing.Size(787, 539);
             this.Name = "IOT";
             this.Text = "IOT";
             this.TransparencyKey = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(192)))), ((int)(((byte)(0)))));
@@ -553,6 +794,13 @@ namespace IOT_SERVER
             this.ClientsTab.PerformLayout();
             this.logPage.ResumeLayout(false);
             this.TabControl.ResumeLayout(false);
+            this.RemoteTab.ResumeLayout(false);
+            this.RemoteTab.PerformLayout();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.serLogTab.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -605,6 +853,27 @@ namespace IOT_SERVER
         private RichTextBox textBox;
         private TabControl TabControl;
         private ToolStripMenuItem dbConn;
+        private TabPage RemoteTab;
+        private Label label7;
+        private TextBox ipBox;
+        private Label label8;
+        private Label label11;
+        private Label label10;
+        private TextBox keyBox;
+        private Label label9;
+        private Button conDeviceBtn;
+        private Button disconBtn;
+        private Panel panel1;
+        private ProgressBar animBar;
+        private Button SetActionBtn;
+        private TextBox OFFBox;
+        private TextBox OnBox;
+        private PictureBox pictureBox2;
+        private PictureBox pictureBox1;
+        private Label lblRemoteNotify;
+        private TabPage serLogTab;
+        private RichTextBox serText;
+        private CheckBox serBox;
     }
 }
 
